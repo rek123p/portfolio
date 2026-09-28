@@ -1,0 +1,139 @@
+{
+    "project": "Portfolio Site",
+    "projectDisplay": { "en": "Portfolio Site", "pl": "Strona portfolio" },
+    "versions": [
+        {
+            "version": "1.0.0",
+            "date": "2006-09-28",
+            "categories": [
+                {
+                    "name": { "en": "Design & visuals", "pl": "Design i wizualia" },
+                    "changes": {
+                        "en": [
+                            "A Hero status badge whose wording is chosen at random from a small phrase pool each time the page loads (\"Awaiting a client\" / \"Currently available\", or a \"Working for {client}\" variant with an optional link) — the choice stays fixed for the rest of the visit even if you switch language.",
+                            "A real 3D spinning logo in the Hero, extruded in Three.js from the actual brand mascot silhouette — a thin gold accent layer sits on top of the main blue shape on both faces, rather than being a second block of equal thickness.",
+                            "The navbar and page metadata show a single brand identifier, \"rekin123p\" — the About section explains how it relates to the other aliases used elsewhere ([-Bravo-], rek123p), and the footer's copyright line reads \"Andrzej Kamiński \\\"rekin123p\\\"\" for legal clarity.",
+                            "Footer uses a two-column layout: copyright and rights notice on the left, version number plus \"Release notes\" and \"Credits\" links on the right.",
+                            "Every page's browser tab title follows the \"<Page name> - Andrzej Kamiński\" format, matching the Open Graph / Twitter card titles.",
+                            "A dedicated Credits page, linked from the footer of every page, crediting everything the site borrows from elsewhere: NASA-sourced Earth and Sun imagery plus the USGS/NASA Moon mosaic behind the cosmic background, Three.js (MIT License) for the WebGL rendering, the Orbitron and Inter typefaces from Google Fonts (SIL Open Font License), Jayden (VEX / vexlixo on Discord) for the site favicon and the icon used in the Digital Business Card, and Claude (Anthropic) for AI-assisted development throughout the site."
+                        ],
+                        "pl": [
+                            "Plakietka statusu w Hero, której treść jest losowana z małej puli fraz przy każdym wczytaniu strony (\"Czekam na klienta\" / \"Obecnie dostępny\", albo wariant \"Pracuję dla {client}\" z opcjonalnym linkiem) — wybór pozostaje niezmieniony do końca wizyty, nawet po zmianie języka.",
+                            "Prawdziwe, kręcące się logo 3D w Hero, wyekstrudowane w Three.js z konturu prawdziwej maskotki-loga — cienka złota warstwa dekoracyjna leży na wierzchu głównej niebieskiej bryły z obu stron, zamiast być drugą bryłą porównywalnej grubości.",
+                            "Pasek nawigacji i metadane strony pokazują jeden identyfikator marki — \"rekin123p\" — sekcja O mnie wyjaśnia jego związek z pozostałymi pseudonimami używanymi gdzie indziej ([-Bravo-], rek123p), a stopka w linii praw autorskich pokazuje \"Andrzej Kamiński \\\"rekin123p\\\"\" dla jasności prawnej.",
+                            "Stopka w układzie dwukolumnowym: prawa autorskie i informacja o prawach po lewej, numer wersji oraz linki \"Informacje o wydaniu\" i \"Credits\" po prawej.",
+                            "Tytuł karty przeglądarki na każdej stronie ma format \"<nazwa strony> - Andrzej Kamiński\", zgodny z tytułami Open Graph / Twitter.",
+                            "Osobna strona Credits, linkowana ze stopki każdej strony, z podziękowaniami za wszystko, co strona zapożycza z zewnątrz: zdjęcia Ziemi i Słońca z zasobów NASA oraz mozaikę Księżyca NASA/USGS użyte w tle kosmicznym, Three.js (licencja MIT) odpowiedzialny za renderowanie WebGL, fonty Orbitron i Inter z Google Fonts (licencja SIL Open Font), Jayden (VEX / vexlixo na Discordzie) za favicon strony i ikonę użytą w Digital Business Card, oraz Claude (Anthropic) za wsparcie AI przy tworzeniu całej strony."
+                        ]
+                    }
+                },
+                {
+                    "name": { "en": "Cosmic 3D & WebGL", "pl": "Kosmiczne 3D i WebGL" },
+                    "changes": {
+                        "en": [
+                            "Live WebGL cosmic background: a rotating Sun, Moon, and Earth rendered with Three.js behind the page content.",
+                            "Two-step graceful fallback ladder for the cosmic background — a pre-rendered rotation frame sequence when WebGL itself isn't available, then a plain static CSS disc if JavaScript never runs at all.",
+                            "Three-layer twinkling starfield with parallax depth, driven by native scroll-linked CSS animations (animation-timeline: scroll()) on browsers that support it.",
+                            "A JavaScript/requestAnimationFrame fallback keeps the starfield parallax working on browsers without native scroll-timeline support (older Firefox), computing each layer's on-screen position fresh every frame so the depth layers stay in sync while scrolling.",
+                            "Feature detection (CSS.supports(...), checking for a real WebGL context) is used throughout instead of browser sniffing, so the background degrades gracefully rather than breaking outright on any specific engine."
+                        ],
+                        "pl": [
+                            "Żywe kosmiczne tło WebGL: kręcące się Słońce, Księżyc i Ziemia renderowane w Three.js za treścią strony.",
+                            "Dwustopniowa, łagodna drabinka awaryjna dla tła kosmicznego — sekwencja klatek obrotu wygenerowana wcześniej, gdy sam WebGL nie jest dostępny, a jeśli JavaScript w ogóle się nie uruchomi — zwykła statyczna tarcza w CSS.",
+                            "Trójwarstwowe migoczące pole gwiazd z efektem paralaksy, oparte na natywnych, powiązanych ze scrollem animacjach CSS (animation-timeline: scroll()) w przeglądarkach, które to wspierają.",
+                            "Fallback w JavaScript/requestAnimationFrame utrzymuje działanie paralaksy gwiazd w przeglądarkach bez natywnego wsparcia scroll-timeline (starszy Firefox), licząc pozycję każddej warstwy od nowa co klatkę, żeby warstwy głębi zostawały zsynchronizowane podczas scrollowania.",
+                            "Wszędzie stosowane jest wykrywanie funkcji (CSS.supports(...), sprawdzanie realnego kontekstu WebGL) zamiast rozpoznawania przeglądarki po nazwie — dzięki temu tło degraduje się łagodnie zamiast się psuć na konkretnym silniku."
+                        ]
+                    }
+                },
+                {
+                    "name": { "en": "Interactive features", "pl": "Funkcje interaktywne" },
+                    "changes": {
+                        "en": [
+                            "The Hero status badge (see Design & visuals) doubles as an interactive element — in the \"busy\" state it can link out to the client's own site.",
+                            "Digital Business Card: a \"Show business card\" button opens a modal, the card visually \"folds together\" via staggered CSS transitions, and a Download button renders it to a canvas and exports a 1050×600 PNG.",
+                            "Live clock comparison between the visitor's local time and Andrzej's own time zone, updating continuously.",
+                            "One-click copy-to-clipboard buttons for contact details (phone, email, Discord handle).",
+                            "Bilingual PL/EN dropdown in the navbar with instant switching and no page reload — the chosen language persists across visits."
+                        ],
+                        "pl": [
+                            "Plakietka statusu w Hero (patrz Design i wizualia) pełni też funkcję interaktywną — w stanie \"zajęty\" może linkować do strony klienta.",
+                            "Cyfrowa wizytówka: przycisk \"Show business card\" otwiera modal, karta wizualnie \"składa się\" dzięki rozłożonym w czasie przejściom CSS, a przycisk Download renderuje ją na canvasie i eksportuje jako PNG 1050×600.",
+                            "Porównanie zegarów na żywo — czas lokalny odwiedzającego zestawiony z czasem Andrzeja, aktualizowane na bieżąco.",
+                            "Przyciski kopiowania danych kontaktowych jednym kliknięciem (telefon, e-mail, Discord).",
+                            "Dwujęzyczny dropdown PL/EN w pasku nawigacji z natychmiastowym przełączaniem bez przeładowania strony — wybrany język zapamiętywany jest między wizytami."
+                        ]
+                    }
+                },
+                {
+                    "name": { "en": "Projects section", "pl": "Sekcja Projektów" },
+                    "changes": {
+                        "en": [
+                            "Virtual Hell — a first-person Unity game built together with Virtual Hell Studios.",
+                            "Digital Business Card — Andrzej's own animated, exportable business card, featured as a project in its own right.",
+                            "3D Logo Spinner — a neutral (non-branded) writeup of the spinning-logo technique originally built for a LOCUS project, reusing the Hero's own shark logo as its live demo instead of duplicating a second WebGL canvas, with a CTA that scrolls back up to the Hero.",
+                            "Screensaver and Wallpaper project cards.",
+                            "Project cards use a scroll-cue arrow pointing up, sideways, or down, depending on whether their call-to-action leads to a section above, beside, or below them."
+                        ],
+                        "pl": [
+                            "Virtual Hell — gra FPP w Unity, tworzona wspólnie z Virtual Hell Studios.",
+                            "Digital Business Card — własna, animowana i eksportowalna wizytówka Andrzeja, pokazana jako osobny projekt.",
+                            "3D Logo Spinner — neutralny (bez brandingu) opis techniki kręcącego się logo, pierwotnie stworzonej dla projektu LOCUS, wykorzystujący jako żywe demo to samo logo-rekina co w Hero, zamiast duplikować drugi canvas WebGL — z CTA przewijającym z powrotem do Hero.",
+                            "Karty projektów Wygaszacz i Tapeta.",
+                            "Karty projektów używają strzałki-wskazówki przewijania w górę, w bok lub w dół, zależnie od tego, czy ich wezwanie do działania prowadzi do sekcji powyżej, obok, czy poniżej."
+                        ]
+                    }
+                },
+                {
+                    "name": { "en": "Pricing", "pl": "Cennik" },
+                    "changes": {
+                        "en": [
+                            "A Pricing section sits between Projects and Contact, with a matching navbar link.",
+                            "Simple tier: Animated Logo, Screensaver, Wallpaper, and Digital Business Card pricing cards — the Business Card is priced lower than a standalone site or generator since it's built directly into the portfolio.",
+                            "Advanced tier: a Full Website Build pricing card, listing copyright-transfer and ongoing maintenance/retainer as separate line items rather than folding them into the base price.",
+                            "Live currency conversion for every price range, backed by exchange rates refreshed hourly through a GitHub Actions workflow pulling from Frankfurter.app — currency buttons stay clickable at all times since the site only ever reads its own static rates file.",
+                            "\"Last updated\" indicator with natural, grammatically-correct relative time in both languages (\"just now\", minute counts, then an exact time and date once it's over an hour old)."
+                        ],
+                        "pl": [
+                            "Sekcja Cennik znajduje się między Projects a Contact, z odpowiadającym linkiem w pasku nawigacji.",
+                            "Warstwa podstawowa: karty cenowe Animowane logo, Wygaszacz, Tapeta i Cyfrowa wizytówka — wizytówka wyceniona niżej niż samodzielna strona czy generator, bo jest wbudowana bezpośrednio w portfolio.",
+                            "Warstwa Advanced: karta cenowa Full Website Build, wymieniająca przeniesienie praw autorskich oraz bieżące utrzymanie/abonament jako osobne pozycje zamiast wliczać je w cenę bazową.",
+                            "Żywe przeliczanie walut dla każdych widełek cenowych, oparte na kursach odświeżanych co godzinę przez workflow GitHub Actions pobierający dane z Frankfurter.app — przyciski walut są zawsze klikalne, bo strona czyta wyłącznie własny statyczny plik z kursami.",
+                            "Wskaźnik \"Ostatnia aktualizacja\" z naturalnym, poprawnym gramatycznie czasem względnym w obu językach (\"przed chwilą\", liczba minut z poprawną polską odmianą, a po godzinie — konkretna godzina i data)."
+                        ]
+                    }
+                },
+                {
+                    "name": { "en": "Bilingual support", "pl": "Dwujęzyczność" },
+                    "changes": {
+                        "en": [
+                            "Full PL/EN interface via a flat JSON dictionary (data/i18n/pl.json), with English baked directly into the HTML as an automatic fallback for any missing key.",
+                            "A languagechange custom event lets every module — starfield, cosmic background, changelog pages, the Hero status badge — react consistently the moment the language is switched, without a page reload."
+                        ],
+                        "pl": [
+                            "Pełny interfejs PL/EN oparty na płaskim słowniku JSON (data/i18n/pl.json), z angielskim wpisanym wprost w HTML jako automatyczny fallback dla brakującego klucza.",
+                            "Niestandardowe zdarzenie languagechange pozwala każdemu modułowi — polu gwiazd, tłu kosmicznemu, stronom release notes, plakietce statusu w Hero — spójnie reagować w momencie zmiany języka, bez przeładowania strony."
+                        ]
+                    }
+                },
+                {
+                    "name": { "en": "Performance & technical details", "pl": "Wydajność i szczegóły techniczne" },
+                    "changes": {
+                        "en": [
+                            "The Hero's 3D shark logo caps itself at 30 FPS, pauses entirely while its tab is in the background (visibilitychange) or scrolled out of view (IntersectionObserver), and falls back to a static image with a slow CSS spin under prefers-reduced-motion.",
+                            "The cosmic Sun/Moon/Earth background caps itself at 24 FPS, pauses entirely while the tab is in the background or per-body when scrolled out of view via IntersectionObserver, and adaptively lowers its pixel ratio if performance drops.",
+                            "The cosmic background recovers gracefully from a lost WebGL context (webglcontextlost) instead of leaving a frozen or broken canvas.",
+                            "Per-project release-notes pages (including this one) are driven entirely by JSON files under data/changelogs/, rather than being hardcoded into the HTML — this page's own content can be organized into named categories instead of one flat list."
+                        ],
+                        "pl": [
+                            "Kręcące się logo-rekin 3D w Hero ogranicza się do 30 FPS, całkowicie pauzuje, gdy karta jest w tle (visibilitychange) lub element jest poza widokiem (IntersectionObserver), a przy prefers-reduced-motion przechodzi na statyczny obrazek z wolnym obrotem w CSS.",
+                            "Kosmiczne tło Słońce/Księżyc/Ziemia ogranicza się do 24 FPS, całkowicie pauzuje, gdy karta jest w tle, albo renderowanie każdego ciała osobno, gdy jest poza widokiem (IntersectionObserver), i adaptacyjnie obniża piksel-ratio, jeśli wydajność spada.",
+                            "Kosmiczne tło łagodnie wraca do działania po utracie kontekstu WebGL (webglcontextlost), zamiast zostawiać zamrożony lub zepsuty canvas.",
+                            "Strony release notes per-projekt (w tym ta) są w całości napędzane plikami JSON w data/changelogs/, a nie zakodowane na sztywno w HTML — treść tej właśnie strony może być zorganizowana w nazwane kategorie zamiast jednej płaskiej listy."
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Release Notes - Andrzej Kamiński</title>
+
+    <meta name="theme-color" content="#0b0a1e" />
+
+    <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="icons/favicon-64.png" sizes="64x64" type="image/png" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rubik:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-lang="en">
+
+<div class="cosmic-bg" aria-hidden="true">
+    <div class="cosmic-nebula"></div>
+    <div class="cosmic-vignette"></div>
+    <canvas class="cosmic-stars cosmic-stars--far"></canvas>
+    <canvas class="cosmic-stars cosmic-stars-twinkle--far"></canvas>
+    <canvas class="cosmic-stars cosmic-stars--mid"></canvas>
+    <canvas class="cosmic-stars cosmic-stars-twinkle--mid"></canvas>
+    <canvas class="cosmic-stars cosmic-stars--near"></canvas>
+    <canvas class="cosmic-stars cosmic-stars-twinkle--near"></canvas>
+    <div class="cosmic-sun"><div class="cosmic-sun__disc"></div><canvas class="cosmic-sun__webgl"></canvas></div>
+    <div class="cosmic-moon"><div class="cosmic-moon__disc"></div><canvas class="cosmic-moon__webgl"></canvas></div>
+    <div class="cosmic-earth"><div class="cosmic-earth__disc"></div><canvas class="cosmic-earth__webgl"></canvas></div>
+</div>
+
+<header>
+    <nav>
+        <a href="index.html" class="brand"><img class="brand-icon" src="icons/brand-logo.png" alt="">rekin123p</a>
+        <ul class="nav-links">
+            <li><a href="index.html#projects" data-i18n="nav.projects">Projects</a></li>
+            <li><a href="index.html#contact" data-i18n="nav.contact">Contact</a></li>
+        </ul>
+        <div class="lang-switch">
+            <button id="langToggle" type="button" aria-haspopup="listbox" aria-expanded="false">
+                <span data-i18n="nav.langLabel">Language:</span>
+                <span id="langCurrent">EN</span>
+                <svg class="lang-switch__caret" viewBox="0 0 12 8" aria-hidden="true">
+                    <path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+            <ul id="langMenu" class="lang-switch__menu" role="listbox" hidden></ul>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <section id="changelog">
+        <a href="index.html#projects" class="back-link" data-i18n="changelog.backLink">← Back to projects</a>
+
+        <span class="section-tag" data-i18n="changelog.tag">Release Notes</span>
+        <h1><span data-i18n="changelog.heading">Release Notes — </span><span id="projectName">_</span></h1>
+
+        <div id="changelogList" class="changelog-list"></div>
+
+        <p id="changelogEmpty" class="changelog-note" hidden data-i18n="changelog.empty">No release notes yet.</p>
+
+        <p id="changelogError" class="changelog-note" hidden data-i18n="changelog.error">Couldn't load release notes. Check the link and try again.</p>
+    </section>
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <p>
+            © <span id="year">2026</span> Andrzej Kamiński "rekin123p".
+            <span data-i18n="footer.rights">All rights reserved.</span>
+        </p>
+        <p>
+            <span class="footer-version">v1.0.0</span>
+            ·
+            <a href="credits.html" data-i18n="footer.credits">Credits</a>
+            ·
+            <a href="index.html#contact" data-i18n="footer.reportBug">Found a bug? Report</a>
+        </p>
+    </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script type="module" src="js/cosmic-webgl.js"></script>
+<script src="js/changelog.js"></script>
+</body>
+</html>

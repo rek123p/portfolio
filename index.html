@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Portfolio - Andrzej Kamiński</title>
+
+    <meta name="description" content="Andrzej Kamiński (rekin123p) — AI-assisted developer crafting games, tools, and custom animations. See projects, pricing, and get in touch." />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="rekin123p" />
+    <meta property="og:title" content="Portfolio - Andrzej Kamiński" />
+    <meta property="og:description" content="Andrzej Kamiński (rekin123p) — AI-assisted developer crafting games, tools, and custom animations. See projects, pricing, and get in touch." />
+    <meta property="og:url" content="TODO: docelowy URL Github Pages — uzupełnić przy wdrożeniu" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Portfolio - Andrzej Kamiński" />
+    <meta name="twitter:description" content="Andrzej Kamiński (rekin123p) — AI-assisted developer crafting games, tools, and custom animations. See projects, pricing, and get in touch." />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rubik:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <meta name="theme-color" content="#0b0a1e" />
+
+    <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="icons/favicon-64.png" sizes="64x64" type="image/png" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-lang="en">
+
+<div class="cosmic-bg" aria-hidden="true">
+    <div class="cosmic-nebula"></div>
+    <div class="cosmic-vignette"></div>
+    <canvas class="cosmic-stars cosmic-stars--far"></canvas>
+    <canvas class="cosmic-stars cosmic-stars-twinkle--far"></canvas>
+    <canvas class="cosmic-stars cosmic-stars--mid"></canvas>
+    <canvas class="cosmic-stars cosmic-stars-twinkle--mid"></canvas>
+    <canvas class="cosmic-stars cosmic-stars--near"></canvas>
+    <canvas class="cosmic-stars cosmic-stars-twinkle--near"></canvas>
+    <div class="cosmic-sun"><div class="cosmic-sun__disc"></div><canvas class="cosmic-sun__webgl"></canvas></div>
+    <div class="cosmic-moon"><div class="cosmic-moon__disc"></div><canvas class="cosmic-moon__webgl"></canvas></div>
+    <div class="cosmic-earth"><div class="cosmic-earth__disc"></div><canvas class="cosmic-earth__webgl"></canvas></div>
+</div>
+
+<header>
+    <nav>
+        <div class="brand"><img src="icons/brand-logo.png" alt="" class="brand-icon" />rekin123p</div>
+        <ul class="nav-links">
+            <li><a href="#about" data-i18n="nav.about">About me</a></li>
+            <li><a href="#skills" data-i18n="nav.skills">Skills</a></li>
+            <li><a href="#projects" data-i18n="nav.projects">Projects</a></li>
+            <li><a href="#pricing" data-i18n="nav.pricing">Pricing</a></li>
+            <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+        </ul>
+        <div class="lang-switch">
+            <button id="langToggle" type="button" aria-haspopup="listbox" aria-expanded="false">
+                <span data-i18n="nav.langLabel">Language:</span>
+                <span id="langCurrent">EN</span>
+                <svg class="lang-switch__caret" viewBox="0 0 12 8" aria-hidden="true">
+                    <path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+            <ul id="langMenu" class="lang-switch__menu" role="listbox" hidden></ul>
+        </div>
+    </nav>
+</header>
+
+<main>
+
+    <section id="hero">
+        <div class="hero-badge" aria-hidden="true">
+            <canvas class="hero-badge__webgl"></canvas>
+            <img class="hero-badge__fallback" src="icons/brand-logo.png" alt="" />
+        </div>
+
+        <span class="eyebrow" id="heroStatus" data-status="available" data-client="" data-client-url=""></span>
+
+        <h1>
+            [-Bravo-]
+            <small data-i18n="hero.subtitle">Andrew "rekin123p" — programmer, game &amp; tools developer</small>
+        </h1>
+
+        <p class="lede" data-i18n="hero.lede">I code with AI assistance in nearly any language — that let's me move quickly from an idea to a working prototype, whether it's a game or a practical tool. Every now and then I also try my hand at graphic design and photography.</p>
+
+        <blockquote class="quote-card">
+            "When in a jam, don't stall, for assistance, dial Bravo's call."
+        </blockquote>
+
+        <div class="hero-actions">
+            <a href="#projects" class="btn btn-primary" data-i18n="hero.ctaProjects"> See projects</a>
+            <a href="#contact" class="btn btn-ghost" data-i18n="hero.ctaContact">Contact</a>
+        </div>
+    </section>
+
+    <section id="about">
+        <h2 data-i18n="about.heading">About me</h2>
+
+        <p data-i18n="about.p1">Hi! I'm Andrzej Kamiński — online known as <strong>rekin123p</strong>, <strong>rek123p</strong> or <strong>[-Bravo-]</strong>. I code with AI assistance, which lets me move freely between languages and technologies instead of sticking to one stack. What I enjoy most is building <strong>games</strong> and <strong>tools/apps</strong> that make life a little easier.</p>
+
+        <p data-i18n="about.p2">Outside of code, I also dabble in <strong>graphic design</strong> — this site's visual theme is a good example of that.</p>
+
+        <ul class="stat-row">
+            <li class="stat-chip" data-i18n="about.roleChip">Role: Programmer</li>
+            <li class="stat-chip" data-i18n="about.workflowChip">Workflow: AI-assisted dev</li>
+            <li class="stat-chip">
+                <span data-i18n="about.myTimeLabel">My time:</span>
+                <span id="myTime">—</span>
+            </li>
+            <li class="stat-chip">
+                <span data-i18n="about.yourTimeLabel">Your time:</span>
+                <span id="yourTime">—</span>
+            </li>
+        </ul>
+    </section>
+
+    <section id="skills">
+        <h2 data-i18n="skills.heading">Skills</h2>
+
+        <div class="skills-grid">
+            <article class="skill-card">
+                <h3 data-i18n="skills.ai.title">AI-Assisted Development</h3>
+                <p data-i18n="skills.ai.desc">I write code with AI assistance in virtually any language — from quick scripts to full applications, picking up new stacks on the fly.</p>
+            </article>
+
+            <article class="skill-card">
+                <h3 data-i18n="skills.design.title">Design</h3>
+                <p data-i18n="skills.design.desc">From time to time I design the visual side of my projects.</p>
+            </article>
+
+            <article class="skill-card">
+                <h3 data-i18n="skills.tools.title">Tools &amp; Apps</h3>
+                <p data-i18n="skills.tools.desc">Practical tools that streamline everyday tasks.</p>
+            </article>
+
+            <article class="skill-card">
+                <h3 data-i18n="skills.games.title">Games</h3>
+                <p data-i18n="skills.games.desc">Building games — mechanics, prototypes, ideas turned into playable demos. <em>(specific engines/technologies to be added)</em></p>
+            </article>
+        </div>
+    </section>
+
+    <section id="projects">
+        <h2 data-i18n="projects.heading">Projects</h2>
+
+        <div class="projects-grid">
+            <article class="project-card">
+                <h3>Virtual Hell</h3>
+                <p data-i18n="projects.virtualHell.desc">A first-person action game I'm building together with my friend Krzychu, as part of Virtual Hell Studios.</p>
+                <p class="credit" data-i18n="projects.virtualHell.credit">Made together with <a href="https://trocheowojtku.rf.gd/" target="_blank" rel="noopener">Krzychu</a> — <a href="https://github.com/Virtual-Hell-Studios" target="_blank" rel="noopener">Virtual Hell Studios</a> on GitHub.</p>
+                <ul class="tag-row">
+                    <li class="tag" data-i18n="projects.virtualHell.tagGame">Game</li>
+                    <li class="tag">Unity</li>
+                    <li class="tag">C#</li>
+                    <li class="tag" data-i18n="projects.virtualHell.tagStatus">In Development</li>
+                </ul>
+            </article>
+
+            <article class="project-card">
+                <h3 data-i18n="projects.bizCard.title">Digital Business Card</h3>
+                <p data-i18n="projects.bizCard.desc">An animated, canvas-rendered business card built right into this site — head to Contact to watch it assemble itself, then download it as a PNG.</p>
+                <p class="credit" data-i18n="projects.bizCard.credit">Designed and built entirely by me — the assembly animation, the canvas renderer, and the PNG export.</p>
+                <ul class="tag-row">
+                    <li class="tag">Canvas API</li>
+                    <li class="tag">Vanilla JS</li>
+                    <li class="tag" data-i18n="projects.bizCard.tagSelf">Self-built</li>
+                </ul>
+                <a href="#contact" class="project-card__cta" data-i18n="projects.bizCard.cta">Try it in Contact ↓</a>
+            </article>
+
+            <article class="project-card">
+                <h3 data-i18n="projects.logoSpinner.title">3D Logo Spinner</h3>
+                <p data-i18n="projects.logoSpinner.desc">A technique for turning any flat logo into a real, rotating 3D solid — not a video, not a GIF, an actual extruded shape rendered live in Three.js. The badge spinning at the top of this page is a live example of it in action.</p>
+                <p class="credit" data-i18n="projects.logoSpinner.credit">Built entirely by me — the vectorization pipeline, the Three.js extrusion, the whole thing.</p>
+                <ul class="tag-row">
+                    <li class="tag">Three.js</li>
+                    <li class="tag">WebGL</li>
+                    <li class="tag" data-i18n="projects.logoSpinner.tagSelf">Self-built</li>
+                </ul>
+                <a href="#hero" class="project-card__cta" data-i18n="projects.logoSpinner.cta">↑ See it in the Hero above</a>
+            </article>
+
+            <article class="project-card">
+                <h3 data-i18n="projects.screensaver.title">Screensaver</h3>
+                <p data-i18n="projects.screensaver.desc">I build custom Windows screensavers — real, installable .scr files with live, animated 3D content instead of a static video loop. This one's a free, complete example: a 3D digital clock (Three.js) that bounces around the screen DVD-logo style, with a hidden author signature revealing itself in the corners. Fully open source — grab it, install it, see exactly how it's built.</p>
+                <p class="credit" data-i18n="projects.screensaver.credit">Built entirely by me — the WinForms/WebView2 shell, the Three.js clock, all of it.</p>
+                <ul class="tag-row">
+                    <li class="tag">C#</li>
+                    <li class="tag">WinForms</li>
+                    <li class="tag">WebView2</li>
+                    <li class="tag">Three.js</li>
+                    <li class="tag" data-i18n="projects.screensaver.tagOpenSource">Open Source</li>
+                </ul>
+                <a href="https://github.com/rek123p/Screensaver-Time-edition---stock" target="_blank" rel="noopener" class="project-card__cta" data-i18n="projects.screensaver.cta"> Get your Screensaver: Time Edition for free ↗</a>
+            </article>
+
+            <article class="project-card">
+                <h3 data-i18n="projects.wallpaper.title">Wallpaper</h3>
+                <p data-i18n="projects.wallpaper.desc">I build custom Android live wallpapers — real, installable ones with genuinely animated content, not a static image. This one's a free, complete example: a digital clock (native Kotlin, Canvas 2D) that bounces around the screen DVD-logo style, with a hidden author signature revealing itself in the corners. Fully open source — grab it, install it, see exactly how it's built.</p>
+                <p class="credit" data-i18n="projects.wallpaper.credit">Built entirely by me — the native Android wallpaper service, the settings screen, all of it.</p>
+                <ul class="tag-row">
+                    <li class="tag">Kotlin</li>
+                    <li class="tag">Android</li>
+                    <li class="tag">Canvas 2D</li>
+                    <li class="tag" data-i18n="projects.wallpaper.tagOpenSource">Open Source</li>
+                </ul>
+                <a href="https://github.com/rek123p/Wallpaper-Time-Edition---stock" target="_blank" rel="noopener" class="project-card__cta" data-i18n="projects.wallpaper.cta">Get your Wallpaper: Time Edition for free ↗</a>
+            </article>
+        </div>
+    </section>
+
+    <section id="pricing">
+        <h2 data-i18n="pricing.heading">Pricing</h2>
+        <p class="lede" data-i18n="pricing.lede">Ballpark ranges for custom work — pick a currency to see them converted live.</p>
+
+        <div class="currency-switch" role="group" aria-label="Currency">
+            <button type="button" class="currency-btn is-active" data-currency="PLN">PLN</button>
+            <button type="button" class="currency-btn" data-currency="EUR">EUR</button>
+            <button type="button" class="currency-btn" data-currency="USD">USD</button>
+            <button type="button" class="currency-btn" data-currency="GBP">GBP</button>
+        </div>
+
+        <div class="pricing-grid">
+            <article class="pricing-card">
+                <h3 data-i18n="pricing.logo.title">Animated Logo</h3>
+                <p class="pricing-card__range" data-price-min="200" data-price-max="600">
+                    <span class="price-min">200</span>-<span class="price-max">600</span> <span class="price-currency">zł</span>
+                </p>
+                <p data-i18n="pricing.logo.desc">A short custom animation of your logo — spin, reveal, loop, whatever fits.</p>
+            </article>
+
+            <article class="pricing-card">
+                <h3 data-i18n="pricing.screensaver.title">Screensaver</h3>
+                <p class="pricing-card__range" data-price-min="250" data-price-max="800">
+                    <span class="price-min">250</span>-<span class="price-max">800</span> <span class="price-currency">zł</span>
+                </p>
+                <p data-i18n="pricing.screensaver.desc">Custom desktop screensaver with a live clock and date.</p>
+            </article>
+
+            <article class="pricing-card">
+                <h3 data-i18n="pricing.wallpaper.title">Wallpaper</h3>
+                <p class="pricing-card__range" data-price-min="150" data-price-max="450">
+                    <span class="price-min">150</span>-<span class="price-max">450</span> <span class="price-currency">zł</span>
+                </p>
+                <p data-i18n="pricing.wallpaper.desc">Custom wallpaper for phone or desktop — static, or animated/live with a clock and date.</p>
+                <ul class="tag-row">
+                    <li class="tag" data-i18n="pricing.wallpaper.tagPhone">Phone</li>
+                    <li class="tag" data-i18n="pricing.wallpaper.tagDesktop">Desktop</li>
+                    <li class="tag" data-i18n="pricing.wallpaper.tagStatic">Static</li>
+                    <li class="tag" data-i18n="pricing.wallpaper.tagAnimated">Animated</li>
+                </ul>
+            </article>
+
+            <article class="pricing-card">
+                <h3 data-i18n="pricing.bizCard.title">Digital Business Card</h3>
+                <p class="pricing-card__range" data-price-min="300" data-price-max="800">
+                    <span class="price-min">300</span>-<span class="price-max">800</span> <span class="price-currency">zł</span>
+                </p>
+                <p data-i18n="pricing.bizCard.desc">The same animated card as the one in Projects — built into your own site, or as a standalone page if you'd rather.</p>
+            </article>
+        </div>
+
+        <p class="pricing-updated">
+            <span data-i18n="pricing.updatedLabel">Rates:</span>
+            <span id="pricingUpdated">—</span>
+        </p>
+
+        <div class="pricing-tier pricing-tier--advanced">
+            <h3 class="pricing-tier__heading" data-i18n="pricing.advanced.heading">Advanced: Full Custom Websites</h3>
+            <p class="pricing-tier__lede" data-i18n="pricing.advanced.lede">For companies and individual clients who want something more built-out — fully custom, built from scratch (no templates yet), on the scale of this portfolio itself.</p>
+
+            <div class="pricing-grid">
+                <article class="pricing-card">
+                    <h3 data-i18n="pricing.webpage.title">Full Website Build</h3>
+                    <p class="pricing-card__range" data-price-min="3000" data-price-max="12000">
+                        <span class="price-min">3000</span>-<span class="price-max">12000</span> <span class="price-currency">zł</span>
+                    </p>
+                    <p data-i18n="pricing.webpage.desc">A fully custom website built from the ground up — design, structure and features tailored to the project, whether it's for a company or a personal site.</p>
+                    <ul class="pricing-extras">
+                        <li data-i18n="pricing.webpage.rights">Full copyright buyout: priced individually (rough reference point: about +30% on top of the base quote, not a fixed rule).</li>
+                        <li data-i18n="pricing.webpage.maintenance">Ongoing maintenance: negotiated individually with each client.</li>
+                    </ul>
+                </article>
+            </div>
+        </div>
+
+        <p class="pricing-disclaimer" data-i18n="pricing.disclaimer">These prices are a starting point, not a fixed price list. If you have an idea beyond the standard scope — a bigger animation, a unique concept, something entirely different from what's shown above — reach out. I can do a lot more than what's shown here, for a price that matches the scope of work.</p>
+    </section>
+
+    <section id="contact">
+        <h2 data-i18n="contact.heading">Contact</h2>
+        <p data-i18n="contact.lede">Easiest way to reach me is by email or Discord.</p>
+
+        <div class="contact-grid">
+            <div class="contact-item">
+                <h3>Email</h3>
+                <a href="mailto:rekin123.pacz.to@gmail.com">rekin123.pacz.to@gmail.com</a>
+                <button class="copy-btn" type="button" data-copy="rekin123.pacz.to@gmail.com">
+                    <span data-i18n="common.copy">Copy</span>
+                </button>
+            </div>
+            <div class="contact-item">
+                <h3>Discord</h3>
+                <span><a href="https://discord.com/users/767630233926762526" target="_blank" rel="noopener">rek123p ([-Bravo-])</a></span>
+                <button class="copy-btn" type="button" data-copy="rek123p">
+                    <span data-i18n="common.copy">Copy</span>
+                </button>
+            </div>
+        </div>
+
+        <ul class="social-list">
+            <li><a href="https://github.com/rek123p" target="_blank" rel="noopener">GitHub — rek123p</a></li>
+            <li><a href="https://steamcommunity.com/profiles/76561199148926524/" target="_blank" rel="noopener">Steam — rekin123p</a></li>
+            <li><a href="https://twitch.tv/rekin123p" target="_blank" rel="noopener">Twitch — rekin123p</a></li>
+            <li><a href="https://youtube.com/@rekin123p" target="_blank" rel="noopener">YouTube — rekin123p</a></li>
+            <li><a href="https://reddit.com/user/rekin123p" target="_blank" rel="noopener">Reddit — rekin123p</a></li>
+        </ul>
+
+        <button type="button" class="btn btn-ghost business-card-trigger" id="showCardBtn" data-i18n="contact.showCard">Show business card</button>
+    </section>
+
+</main>
+
+<div class="card-modal" id="cardModal" hidden>
+    <div class="card-modal__backdrop" data-card-close></div>
+    <div class="card-modal__panel">
+        <button type="button" class="card-modal__close" data-card-close aria-label="Close">&times;</button>
+
+        <div class="biz-card" id="bizCard">
+            <div class="biz-card__piece biz-card__bg"></div>
+            <img class="biz-card__piece biz-card__logo" src="icons/icon-512.png" alt="">
+            <div class="biz-card__piece biz-card__name">
+                <span class="biz-card__fullname">Andrzej Kamiński</span>
+                <span class="biz-card__handle">rekin123p</span>
+            </div>
+            <div class="biz-card__piece biz-card__contact">
+                <span>+48 663 842 868</span>
+                <span>rekin123.pacz.to@gmail.com</span>
+                <span>Discord: rek123p</span>
+            </div>
+            <ul class="biz-card__piece biz-card__tags">
+                <li data-i18n="card.tag.ai">AI-assisted dev</li>
+                <li data-i18n="card.tag.tools">Tools &amp; apps</li>
+                <li data-i18n="card.tag.design">Design &amp; motion</li>
+                <li data-i18n="card.tag.games">Games</li>
+            </ul>
+        </div>
+
+        <button type="button" class="btn btn-primary card-modal__download" id="downloadCardBtn" data-i18n="card.download">Download</button>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-inner">
+        <p>
+            © <span id="year">2026</span> Andrzej Kamiński "rekin123p".
+            <span data-i18n="footer.rights">All rights reserved.</span>
+        </p>
+        <p>
+            <span class="footer-version">v1.0.0</span>
+            ·
+            <a href="changelog.html?project=site" data-i18n="footer.siteChangelog">Release notes</a>
+            ·
+            <a href="credits.html" data-i18n="footer.credits">Credits</a>
+            ·
+            <a href="#contact" data-i18n="footer.reportBug">Found a bug? Report</a>
+        </p>
+    </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script type="module" src="js/cosmic-webgl.js"></script>
+<script src="js/shark-logo-shapes.js"></script>
+<script type="module" src="js/shark-logo.js"></script>
+</body>
+</html>

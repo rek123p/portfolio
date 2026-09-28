@@ -1,0 +1,40 @@
+name: Update currency rates
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-rates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch and update rates
+        run: |
+          if curl -sf "https://api.frankfurter.app/latest?from=PLN&to=EUR,USD,GBP" -o /tmp/frankfurter.json; then
+            node -e "
+              const fs = require('fs');
+              const raw = JSON.parse(fs.readFileSync('/tmp/frankfurter.json', 'utf8'));
+              const out = {
+                updated: new Date().toISOString(),
+                base: 'PLN',
+                rates: { PLN: 1, ...raw.rates }
+              };
+              fs.writeFileSync('data/rates.json', JSON.stringify(out, null, 2) + '\n');
+            "
+          else
+            echo 'Frankfurter fetch failed, keeping existing data/rates.json as-is'
+          fi
+      
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/rates.json
+          git diff --cached --quiet || git commit -m "Update currency rates"
+          git push

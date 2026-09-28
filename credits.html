@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Credits - Andrzej Kamiński</title>
+
+    <meta name="theme-color" content="#0b0a1e" />
+
+    <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="icons/favicon-64.png" sizes="64x64" type="image/png" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rubik:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-lang="en">
+
+<div class="cosmic-bg" aria-hidden="true">
+    <div class="cosmic-nebula"></div>
+    <div class="cosmic-vignette"></div>
+    <canvas class="cosmic-stars cosmic-stars--far"></canvas>
+    <canvas class="cosmic-stars cosmic-stars-twinkle--far"></canvas>
+    <canvas class="cosmic-stars cosmic-stars--mid"></canvas>
+    <canvas class="cosmic-stars cosmic-stars-twinkle--mid"></canvas>
+    <canvas class="cosmic-stars cosmic-stars--near"></canvas>
+    <canvas class="cosmic-stars cosmic-stars-twinkle--near"></canvas>
+    <div class="cosmic-sun"><div class="cosmic-sun__disc"></div><canvas class="cosmic-sun__webgl"></canvas></div>
+    <div class="cosmic-moon"><div class="cosmic-moon__disc"></div><canvas class="cosmic-moon__webgl"></canvas></div>
+    <div class="cosmic-earth"><div class="cosmic-earth__disc"></div><canvas class="cosmic-earth__webgl"></canvas></div>
+</div>
+
+<header>
+    <nav>
+        <a href="index.html" class="brand"><img class="brand-icon" src="icons/brand-logo.png" alt="">rekin123p</a>
+        <ul class="nav-links">
+            <li><a href="index.html#projects" data-i18n="nav.projects">Projects</a></li>
+            <li><a href="index.html#contact" data-i18n="nav.contact">Contact</a></li>
+        </ul>
+        <div class="lang-switch">
+            <button id="langToggle" type="button" aria-haspopup="listbox" aria-expanded="false">
+                <span data-i18n="nav.langLabel">Language:</span>
+                <span id="langCurrent">EN</span>
+                <svg class="lang-switch__caret" viewBox="0 0 12 8" aria-hidden="true">
+                    <path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+            <ul id="langMenu" class="lang-switch__menu" role="listbox" hidden></ul>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <section id="credits">
+        <a href="index.html" class="back-link" data-i18n="credits.backLink">← Back to portfolio</a>
+
+        <span class="section-tag" data-i18n="credits.tag">Credits</span>
+        <h1 data-i18n="credits.heading">Credits &amp; Sources</h1>
+        <p class="lede" data-i18n="credits.lede">This site stands on other people's work too — here's everything it borrows, and who made it.</p>
+
+        <div class="skills-grid">
+            <article class="skill-card">
+                <h3 data-i18n="credits.earth.title">Earth Texture</h3>
+                <p data-i18n="credits.earth.desc">NASA public-domain Earth imagery. (The exact source page is lost to time — if you recognize it, let me know!)</p>
+            </article>
+
+            <article class="skill-card">
+                <h3 data-i18n="credits.moon.title">Moon Texture</h3>
+                <p data-i18n="credits.moon.desc">LRO/LROC Wide Angle Camera (WAC) Global Morphology Mosaic (100 m) — NASA/GSFC/Arizona State University, processed by the USGS Astrogeology Science Center. Public domain.</p>
+                <a href="https://www.usgs.gov/media/images/moon-lro-lroc-wac-global-morphology-mosaic-100-m" target="_blank" rel="noopener" data-i18n="credits.viewSource">View source →</a>
+            </article>
+
+            <article class="skill-card">
+                <h3 data-i18n="credits.sun.title">Sun Texture</h3>
+                <p data-i18n="credits.sun.desc">Composited from NASA solar imagery reference material, with AI assistance.</p>
+            </article>
+
+            <article class="skill-card">
+                <h3 data-i18n="credits.threejs.title">Three.js</h3>
+                <p data-i18n="credits.threejs.desc">The 3D library powering the cosmic background — sun, moon, earth, and the WebGL rendering behind them. MIT License.</p>
+                <a href="https://threejs.org/" target="_blank" rel="noopener" data-i18n="credits.viewSource">View Source →</a>
+            </article>
+
+            <article class="skill-card">
+                <h3 data-i18n="credits.orbitron.title">Orbitron</h3>
+                <p data-i18n="credits.orbitron.desc">The display font used for headings across the site. Designed by Matt McInerney, via Google Fonts. SIL Open Font License.</p>
+                <a href="https://fonts.google.com/specimen/Orbitron" target="_blank" rel="noopener" data-i18n="credits.viewSource">View Source →</a>
+            </article>
+
+            <article class="skill-card">
+                <h3 data-i18n="credits.inter.title">Inter</h3>
+                <p data-i18n="credits.inter.desc">The body text font used throughout the site. Designed by Rasmus Andresson, via Google Fonts. SIL Open Font License.</p>
+                <a href="https://fonts.google.com/specimen/Inter" target="_blank" rel="noopener" data-i18n="credits.viewSource">View source →</a>
+            </article>
+
+            <article class="skill-card">
+                <h3 data-i18n="credits.jayden.title">Icons</h3>
+                <p data-i18n="credits.jayden.desc">The site favicon and the icon used in the Digital Business Card were both made by Jayden.</p>
+                <a href="https://discord.com/users/672863453014130715" target="_blank" rel="noopener" data-i18n="credits.jayden.discord">VEX (vexlixo) on Discord&nbsp;→</a>
+            </article>
+
+            <article class="skill-card">
+                <h3 data-i18n="credits.ai.title">AI-Assisted Development</h3>
+                <p data-i18n="credits.ai.desc">This whole site — code, structure, and a lot of back-and-forth along the way — was built with the help of Claude (Anthropic). I'm an AI-assisted dev, and it felt right to say so here too.</p>
+                <a href="https://claude.com" target="_blank" rel="noopener" data-i18n="credits.viewSource">View Source →</a>
+            </article>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <p>
+            © <span id="year">2026</span> Andrzej Kamiński "rekin123p".
+            <span data-i18n="footer.rights">All rights reserved.</span>
+        </p>
+        <p>
+            <span class="footer-version">v1.0.0</span>
+            ·
+            <a href="changelog.html?project=site" data-i18n="footer.siteChangelog">Release notes</a>
+            ·
+            <a href="index.html#contact" data-i18n="footer.reportBug">Found a bug? Report</a>
+        </p>
+    </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script type="module" src="js/cosmic-webgl.js"></script>
+</body>
+</html>

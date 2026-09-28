@@ -1,0 +1,428 @@
+// Cosmic background — real 3D rotating spheres via WebGL (Three.js), with
+// a directional light matching the page's fixed "sun in the corner"
+// lighting, so the terminator (day/night edge) stays physically correct as
+// each body rotates — instead of a flat photo spinning like a record.
+// 
+// Three-tier fallback ladder:
+//  1. WebGL works              -> live 3D, lit every frame (below)
+//  2. WebGL doesn't, but this
+//     module script did run    -> initFrameFallback(): steps every __disc
+//                                  through 60 pre-rendered rotation frames
+//                                  (a "filmstrip") instead of flat-spinning
+//                                  the whole photo like a coin
+//  3. Modules didn't even run  -> the plain __disc stays exactly as CSS
+//                                  left it: a flat, spinning photo
+//                                  (sun.png / earth.png / moon.png)
+// 
+// The sun's frames carry no baked shading (it's emissive/unlit, same as its
+// MeshBasicMaterial in WebGL) — what tier 2 fixes for it is purely the
+// rotation itself: real orthographic projection instead of a flat 2D spin.
+// 
+// Three.js is loaded with a DYNAMIC import (inside initCosmicWebgl, not a
+// static `import ... from` at the top of the file) specifically so tier 2
+// can be deployed and work on its own before tier 1's assets even exist —
+// a static import of a missing file fails the whole module immediately,
+// which would take tier 2 down with it. With a dynamic import, a missing
+// or failed vendor/three.module.min.js is just a rejected promise, caught
+// below like any other init failure, same as a missing WebGL context.
+
+function isWebglAvailable() {
+  try {
+    const canvas = document.createElement("canvas");
+    return !!(
+      window.WebGLRenderingContext &&
+      (canvas.getContext("webgl2") || canvas.getContext("webgl"))
+    );
+  } catch (err) {
+    return false;
+  }
+}
+
+// A single hardcoded LIGHT_DIR can't be correct for both bodies at once:
+// the sun sits in the page's top-LEFT corner, the moon is the top-RIGHT
+// corner (so the sun is off to the moon's left, rougly level with it),
+// while earth sits at the very bottom of the whole page, center — so
+// the sun is way ABOVE earth, only slightly to one side. Those are two
+// very different angles. Instead, the light direction for each body is
+// computed from where the sun ACTUALLY sits on screen relative to that
+// body, using their real laid-out positions.
+
+const SUN_EL = document.querySelector(".cosmic-sun");
+
+function computeLightDir(targetEl) {
+  if (!SUN_EL || !targetEl) return [-0.6, 0.6, 0.5]; // fallback if missing
+  const sunRect = SUN_EL.getBoundingClientRect();
+  const targetRect = targetEl.getBoundingClientRect();
+  const sunX = sunRect.left + sunRect.width / 2;
+  const sunY = sunRect.top + sunRect.height / 2;
+  const targetX = targetRect.left + targetRect.width / 2;
+  const targetY = targetRect.top + targetRect.height / 2;
+
+  // Screen-space vector from the body to the sun. Y is flipped: screen
+  // coordinates increase downward, but Three.js's Y axis increases
+  // upward, so "sun is above" (sunY < targetY, negative dy) needs to
+  // become a POSITIVE Three.js Y component.
+  const dx = sunX - targetX;
+  const dy = -(sunY - targetY);
+  const len = Math.hypot(dx, dy) || 1;
+
+  // A fixed forward(z) component keeps the light partly toward the
+  // camera regardless of the on-screen angle.
+  return [(dx / len) * 0.85, (dy / len) * 0.85, 0.5];
+}
+
+const BODIES = [
+  {
+    key:  "sun",
+    outer: document.querySelector(".cosmic-sun"),
+    canvas: document.querySelector(".cosmic-sun__webgl"),
+    texture: "data/images/sun_equirect.jpg",
+    emissive: true, // the sun is self-lit — not shaded by the directional light
+    rotationSpeed: (2 * Math.PI) / 240, // rad/s, one revolution per 240s
+  },
+  {
+    key: "moon",
+    outer: document.querySelector(".cosmic-moon"),
+    canvas: document.querySelector(".cosmic-moon__webgl"),
+    texture: "data/images/moon_equirect.jpg",
+    emissive: false,
+    rotationSpeed: -(2 * Math.PI) / 320,
+  },
+  {
+    key: "earth",
+    outer: document.querySelector(".cosmic-earth"),
+    canvas: document.querySelector(".cosmic-earth__webgl"),
+    texture: "data/images/earth_equirect.jpg",
+    emissive: false,
+    rotationSpeed: (2 * Math.PI) / 200,
+  },
+];
+
+// --- Tier 2: pre-rendered rotation-frame fallback ---
+// 
+// Each body's frames are split across multiple smaller sprite-sheet FILES
+// ("chunks") instead of one giant sheet — a single huge sheet (moon hit
+// 9600xp wide at the old 2 FPS) can exceed a phone/tablet GPU's max
+// texture size, which is what made sun/moon render broken while earth
+// (a bit smaller) still worked. Every chunk uses the same body.chunkCols x
+// body.chunkRows grid; the last chunk of a body is a simply partially filled.
+// files live in data/images/<body>_frames/chunk-00.jpg, chunk-01.jpg, ...
+// generated by scripts/generate_frame_sequence.py.
+//
+// Frame count is different PER BODY — each rotates at a different
+// real-world speed (sun 240s, moon 320s, earth 200s), so to hit the same
+// 10 frames-shown-per-second rate for all three, each needs a different
+// total frame count(240*10=2400, 320*10=3200, 200*10=2000).
+//
+// background-size/-position are set in PERCENT (not px), relative to
+// ONE CHUNK's grid (not the body's total frame count) — that's what makes
+// this work regardless of a chunk sheet's actual pixel size or the disc's
+// responsive (clamp()-based) on-screen size.
+const FRAME_BODIES = [
+  {
+    key: "sun",
+    el: document.querySelector(".cosmic-sun__disc"),
+    srcDir: "data/images/sun_frames",
+    chunkCols: 11,
+    chunkRows: 11,
+    frameCount: 2400, // 240s * 10fps
+    durationMs: 240000, // matches the sun's cosmic-spin duration in style.css
+    reverse: false,
+  },
+  {
+    key: "moon",
+    el: document.querySelector(".cosmic-moon__disc"),
+    srcDir: "data/images/moon_frames",
+    chunkCols: 13,
+    chunkRows: 13,
+    frameCount: 3200, // 320s * 10fps
+    durationMs: 320000, // matches the moon's cosmic-spin duration in style.css
+    reverse: true, // matches `cosmic-spin ... reverse` on the moon disc
+  },
+  {
+    key: "earth",
+    el: document.querySelector(".cosmic-earth__disc"),
+    srcDir: "data/images/earth_frames",
+    chunkCols: 9,
+    chunkRows: 9,
+    frameCount: 2000, // 200s * 10fps
+    durationMs: 200000, // matches the earth's cosmic-spin duration in style.css
+    reverse: false,
+  },
+];
+
+let frameFallbackStarted = false;
+
+function initFrameFallback() {
+  if (frameFallbackStarted) return;
+  frameFallbackStarted = true;
+
+  FRAME_BODIES.forEach((body) => {
+    if (!body.el) return;
+    const perChunk = body.chunkCols * body.chunkRows;
+    const totalChunks = Math.ceil(body.frameCount / perChunk);
+    const chunkUrl = (idx) =>
+      `${body.srcDir}/chunk-${String(idx).padStart(2, "0")}.jpg`;
+
+    // A bare `new  Image()` that's never attached to the page can end up
+    // decoded lazily (or not decoded ahead of time at all) on some mobile
+    // browsers, since it was never part of the actual render tree. This
+    // <img> IS no the page — off-screen and invisible, but genuinely
+    // laid out and painted — so its incoming chunk gets decoded eagerly,
+    // like any other real on-screen image, instead of being put off
+    // until the moment it's actually needed.
+    const preloadEl = document.createElement("img");
+    preloadEl.style.cssText =
+      "position:fixed; width:1px; height:1px; opacity:0; pointer-events:none; left:-9999px; top:-9999px;";
+    document.body.appendChild(preloadEl);
+
+    // Inline styles beat the stylesheet's background-image/-size/-position and
+    // `animation: cosmic-spin ...` regardless of selector specificity,
+    // so no new CSS is needed to swtich this element into "frames" mode.
+    // backgroundImage is NOT set here — showFrame() sets it on the
+    // first call, since which chunk file to start depends on index 0.
+    body.el.style.backgroundSize = `${body.chunkCols * 100}% ${body.chunkRows * 100}%`;
+    body.el.style.animation = "none";
+
+    let index = 0;
+    let currentChunk = -1;
+    const showFrame = () => {
+      const chunkIndex = Math.floor(index / perChunk);
+      const idxInChunk = index % perChunk;
+      const col = idxInChunk % body.chunkCols;
+      const row = Math.floor(idxInChunk / body.chunkCols);
+
+      // Only touch backgroundImage when the chunk actually changes —
+      // reassigning the same url() every 100ms would make the browser
+      // re-decode/re-fetch it for no reason.
+      if (chunkIndex !== currentChunk) {
+        currentChunk = chunkIndex;
+        const chunkFile = String(chunkIndex).padStart(2, "0");
+        body.el.style.backgroundImage = `url("${body.srcDir}/chunk-${chunkFile}.jpg")`;
+
+        // Preloading the bytes alone isn't enough to stop the split-second
+        // blank at the swap: a big JPEG (chunks) are ~4000px on a side) can
+        // still take real CPU time to DECODE the first time it's painted,
+        // even once it's fully downloaded/cached. img.decode() forces that
+        // decide to happen n ow, in the background, while the current chunk
+        // is still on screen — so by the time this chunk's turn comes up,
+        // there's nothing left to do but paint an already-decoded bitmap.
+        const nextChunk = (chunkIndex + 1) % totalChunks;
+        preloadEl.src = chunkUrl(nextChunk);
+        if (preloadEl.decode) preloadEl.decode().catch(() => {});
+      }
+
+      const xPct = body.chunkCols > 1 ? (col / (body.chunkCols -1)) * 100 : 0;
+      const yPct = body.chunkRows > 1 ? (row / (body.chunkRows - 1)) * 100 : 0;
+      body.el.style.backgroundPosition = `${xPct}% ${yPct}%`;
+      index = (index + 1) % body.frameCount;
+    };
+
+    showFrame();
+    setInterval(showFrame, body.durationMs / body.frameCount);
+  });
+}
+
+// Adaptive render quality: starts optimistic (device pixel ratio, capped at
+// 2x) and self-downgrades at runtime if actual measured frame times show
+// the device strunggling — see maybeDowngradeQuality() in initCosmicWebgl().
+let currentPixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+const MIN_PIXEL_RATIO = 1;
+
+function setupBody(THREE, body) {
+  const { canvas, texture, emissive, outer } = body;
+
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    alpha: true,
+    antialias: false,
+  });
+  renderer.setPixelRatio(currentPixelRatio);
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+
+  // Orthographic camera: no perspective foreshortening, so the sphere's
+  // silhouette is a perfect, edge-to-edge circle matching the CSS
+  // border-radius circle it sits inside — same conventions as the
+  // photographic discs (sun.png etc.) filling ~99% of their canvas.
+  const camera = new THREE.OrthographicCamera(-1.03, 1.03, 1.03, -1.03, 0.1, 10);
+  camera.position.set(0, 0, 3);
+  camera.lookAt(0, 0, 0);
+
+  const geometry = new THREE.SphereGeometry(1, 48, 32);
+  const map = new THREE.TextureLoader().load(texture);
+  map.colorSpace = THREE.SRGBColorSpace;
+
+  const material = emissive
+    ? new THREE.MeshBasicMaterial({ map })
+    : new THREE.MeshLambertMaterial({ map });
+
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
+
+  // Declared outside the if(!emissive) block so resize() below can see it
+  // (stays null for the sun, which has no light to reposition).
+  let light = null;
+
+  if (!emissive) {
+    // Modern Three.js (r155+) removed "legacy" light intensities in favor
+    // of physically-based units — the same numeric intensity that used to
+    // look right in older tutorials now renders noticeably dim. 1.6/0.18
+    // rendered every non-emissive body under-lit and low-contrast. 8.0
+    // directional with a comparatiely low 0.25 ambient gave the
+    // clearest, most correctly-directional gradient on both
+    // earth_equirect.jpg and moon_equirect.jpg.
+    light = new THREE.DirectionalLight(0xffffff, 8);
+    light.position.set(...computeLightDir(outer));
+    scene.add(light);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.25));
+  }
+
+  function resize() {
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    if (w === 0 || h === 0) return;
+    renderer.setSize(w, h, false);
+    // The sun/body layout is proportional (clamp()-based) but not
+    // perfectly rigid across viewport sizes, so re-derive the light
+    // direction from the sun's actual current position too.
+    if (light) light.position.set(...computeLightDir(outer));
+  }
+
+  const ro = new ResizeObserver(resize);
+  ro.observe(canvas);
+  resize();
+
+  // Two more things can shift this body's layout AFTER this ran, same
+  // class of bug as each other: web fonts (Orbitron/Inter) finishing to
+  // load with display=swap, and switching the site's language (Polish
+  // text is generally longer than English, and can reflow the page).
+  // Either can leave this canvas's size/light direction stale — recompute
+  // once things settle.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(resize);
+  }
+  document.addEventListener("languagechange", resize);
+
+  // A lost context (driver crash, GPU under memory pressure, etc.) is rare
+  // but not impossible — drop back to the CSS fallback rather than leaving
+  // a dead black canvas on screen.
+  canvas.addEventListener(
+    "webglcontextlost",
+    (event) => {
+      event.preventDefault();
+      document.documentElement.classList.remove("cosmic-webgl-active");
+      initFrameFallback();
+    },
+    false
+  );
+
+  const instance = {
+    mesh,
+    rotationSpeed: body.rotationSpeed,
+    renderer,
+    scene,
+    camera,
+    visible: true,
+  };
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      instance.visible = entries[0].isIntersecting;
+    },
+  { rootMargin: "200px 0px" }
+  );
+  io.observe(canvas);
+
+  return instance;
+}
+
+async function initCosmicWebgl() {
+  if (!BODIES.every((b) => b.outer && b.canvas)) {
+    initFrameFallback();
+    return;
+  }
+  if (!isWebglAvailable()) {
+    initFrameFallback();
+    return;
+  }
+
+  let THREE;
+  try {
+    THREE = await import("./vendor/three.module.min.js");
+  } catch(err) {
+    // Vendor bundle missing or failed to fetch (e.g. tier 1's assets
+    // haven't been deployed yet, or a network hiccup) — the frame
+    // sequence covers exactly this case.
+    console.warn("Three.js failed to load, using frame-sequence fallback:", err);
+    initFrameFallback();
+    return;
+  }
+
+  let instances;
+  try {
+    instances = BODIES.map((body) => setupBody(THREE, body));
+  } catch (err) {
+    // Any init failure (shader compile issue, context creation edge case,
+    // etc.) — drop to the pre-rendered frame sequence rather than showing
+    // a broken canvas.
+    console.warn("Cosmic WebGL init failed, using frame-sequence fallback:", err);
+    initFrameFallback();
+    return;
+  }
+
+  document.documentElement.classList.add("cosmic-webgl-active");
+
+  const clock = new THREE.Clock();
+
+  const FRAME_INTERVAL_MS = 1000 / 24;
+  let lastRenderTime = 0;
+
+  const SAMPLE_SIZE = 20;
+  let sampleTotal = 0;
+  let sampleCount = 0;
+
+  function maybeDowngradeQuality(elapsedMs) {
+    sampleTotal += elapsedMs;
+    sampleCount += 1;
+    if (sampleCount < SAMPLE_SIZE) return;
+    const avg = sampleTotal / sampleCount;
+    sampleTotal = 0;
+    sampleCount = 0;
+    if (avg > 20 && currentPixelRatio > MIN_PIXEL_RATIO) {
+      currentPixelRatio = Math.max(MIN_PIXEL_RATIO, currentPixelRatio - 0.5);
+      instances.forEach((inst) => inst.renderer.setPixelRatio(currentPixelRatio));
+    }
+  }
+
+  // Pause entirely while the tab is in the background — same safeguard
+  // shark-logo.js already has. clock.getDelta() measures real wall-clock
+  // time regardless of whether animate() keeps running, so on return to the
+  // tab we discard one delta to reset its reference point: otherwise the
+  // first render back would apply one huge dt (the entire time spent
+  // hidden) as a single jump in rotation instead of a clean pause.
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) clock.getDelta();
+  });
+
+  function animate(now) {
+    requestAnimationFrame(animate);
+    if (document.hidden) return;
+    if (now - lastRenderTime < FRAME_INTERVAL_MS) return;
+
+    const dt = clock.getDelta();
+    lastRenderTime = now;
+
+    const renderStart = performance.now();
+    instances.forEach((inst) => {
+      if (!inst.visible) return;
+      inst.mesh.rotation.y += inst.rotationSpeed * dt;
+      inst.renderer.render(inst.scene, inst.camera);
+    });
+    maybeDowngradeQuality(performance.now() - renderStart);
+  }
+  requestAnimationFrame(animate);
+}
+
+initCosmicWebgl();

@@ -1,0 +1,1365 @@
+:root {
+    --bg-0: #060512;
+    --bg-1: #0b0a1e;
+    --bg-2: #1b1240;
+    --bg-3: #2c1f5c;
+
+    --gold: #e8b64c;
+    --gold-bright: #f6d383;
+    --gold-dim: rgba(232, 182, 76, 0.35);
+
+    --text-0: #f4f1fb;
+    --text-1: #c9c3e0;
+    --text-2: #8d85ad;
+
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --card-border: rgba(232, 182, 76, 0.16);
+    --card-border-hover: rgba(232, 182, 76, 0.45);
+
+    --font-head: "Orbitron", "Rubik", sans-serif;
+    --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+    color-scheme: dark;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    position: relative;
+    font-family: var(--font-body);
+    color: var(--text-0);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    background: linear-gradient(180deg, var(--bg-3) 0%, var(--bg-2) 35%, var(--bg-1) 65%, var(--bg-0) 100%);
+}
+
+/* =========================================================
+   Cosmic background (sun / moon / stars / earth)
+   Full-page-height layer, positioned behind all content.
+   ========================================================= */
+
+.cosmic-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* Nebula — soft, low-opacity colour washes behind the stars. Breaks up the
+   flat two-tone gradient with a bit of depth/richness, loosely tied to the
+   nearby bodies (a warm wash near the sun's corner, cool blue near earth). */
+.cosmic-nebula {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(
+        ellipse 60% 35% at 18% 8%,
+        rgba(232, 182, 76, 0.05),
+        transparent 70%
+    ), radial-gradient(ellipse 70% 45% at 88% 26%, rgba(94, 74, 200, 0.1), transparent 70%),
+    radial-gradient(ellipse 65% 40% at 12% 55%, rgba(56, 140, 168, 0.07), transparent 70%),
+    radial-gradient(ellipse 80% 50% at 72% 82%, rgba(150, 70, 150, 0.06), transparent 70%),
+    radial-gradient(ellipse 90% 55% at 50% 100%, rgba(60, 100, 200, 0.08), transparent 70%);
+}
+
+/* Vignette — very subtle darkening toward the far edges, so the space
+   around the lit corners/content reads as endless dark rather than a flat
+   painted backdrop. */
+.cosmic-vignette {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        ellipse 90% 70% at 50% 15%,
+        transparent 45%,
+        rgba(2, 2, 10, 0.4) 100%
+    );
+}
+
+/* Sun — peeks from the top-left corner of the whole page. Outer element
+   handles position/size/glow + a slow float; the inner disc carries the
+   texture and rotates on its own (so the two motions don't fight over the
+   same `transform`). */
+.cosmic-sun {
+    position: absolute;
+    --d: clamp(260px, 42vw, 520px);
+    top: calc(var(--d) * -0.214);
+    left: calc(var(--d) * -0.214);
+    width: var(--d);
+    height: var(--d);
+    border-radius: 50%;
+    box-shadow: 0 0 140px rgba(246, 211, 131, 0.22);
+    animation: cosmic-float 7s ease-in-out infinite,
+    sun-pulse 5s ease-in-out infinite;
+    will-change: transform;
+}
+
+.cosmic-sun__disc {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background-image: url("../data/images/sun.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.cosmic-sun__webgl {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: none;
+}
+
+/* Moon — peeks from the top-right corner, plae * faint craters */
+.cosmic-moon {
+    position: absolute;
+    --d: clamp(200px, 34vw, 420px);
+    top: calc(var(--d) * -0.235);
+    right: calc(var(--d) * -0.235);
+    width: var(--d);
+    height: var(--d);
+    border-radius: 50%;
+    box-shadow: 0 0 90px rgba(200, 200, 230, 0.15);
+    animation: cosmic-float 9s ease-in-out infinite -2s;
+    will-change: transform;
+}
+
+.cosmic-moon__disc {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background-image: url("../data/images/moon.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.cosmic-moon__webgl {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: none;
+}
+
+/* Earth — peeks from the very bottom of the whole page */
+.cosmic-earth {
+    position: absolute;
+    --d: clamp(340px, 60vw, 780px);
+    bottom: calc(var(--d) * -0.367);
+    left: 50%;
+    width: var(--d);
+    height: var(--d);
+    border-radius: 50%;
+    box-shadow: 0 -40px 120px rgba(70, 130, 220, 0.22);
+    animation: earth-float 8s ease-in-out infinite -3s;
+    will-change: transform;
+}
+
+.cosmic-earth__disc {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background-image: url("../data/images/earth.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.cosmic-earth__webgl {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: none;
+}
+
+/* Real 3D rendering (js/cosmic-webgl.js) — added once WebGL is confirmed
+   working, so the sphere gets a live, correctly-lit rotation instead of a
+   flat spinning photo.  Falls back to the __disc images above whenever
+   WebGL isn't available, fails to init, or loses its context later. */
+html.cosmic-webgl-active .cosmic-sun__webgl,
+html.cosmic-webgl-active .cosmic-moon__webgl,
+html.cosmic-webgl-active .cosmic-earth__webgl {
+    display: block;
+}
+
+html.cosmic-webgl-active .cosmic-sun__disc,
+html.cosmic-webgl-active .cosmic-moon__disc,
+html.cosmic-webgl-active .cosmic-earth__disc {
+    display: none;
+}
+
+/* Shared idle-motion keyframes for the three bodies. Rotation is slow
+   enough (minutes per revolution) that the baked-in lighting direction
+   never visibly drifts out of sync during a normal visit. */
+@keyframes cosmic-float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-9px);
+    }
+}
+
+@keyframes earth-float {
+    0%,
+    100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        transform: translateX(-50%) translateY(-11px);
+    }
+}
+
+@keyframes cosmic-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes sun-pulse {
+    0%,
+    100% {
+        box-shadow: 0 0 140px rgba(246, 211, 131, 0.22);
+    }
+    50% {
+        box-shadow: 0 0 170px rgba(246, 211, 131, 0.32);
+    }
+}
+
+/* Stars — three parallax depth layers, each split into a static canvas
+   (drawn once, most of the stars) and a twinkle canvas (the small animated
+   subset, redrawn on an interval) so the recurring redraw only ever
+   touches the few stars that actually change. Sizing/position: full page
+   height, same as .cosmic-bg itself. Drawn/managed by js/app.js. */
+.cosmic-stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    will-change: transform;
+}
+
+/* Where supported, the scroll-position transform itself runs natively on
+   the compositor (no JS involved per frame at all) via a scroll-linked
+   CSS animation — js/app.js only computes the --parallax-end endpoint.
+   Browsers without support keep the JS/rAF fallback in app.js instead. */
+@supports (animation-timeline: scroll()) {
+    .cosmic-stars {
+        animation-name: star-parallax;
+        animation-timeline: scroll(root block);
+        animation-fill-mode:both;
+        animation-timing-function: linear;
+    }
+
+    @keyframes star-parallax {
+        from {
+            transform: translateY(0);
+        }
+        to {
+            transform: translateY(var(--parallax-end, 0px));
+        }
+    }
+}
+
+/* Browsers without native scroll-linked animations use the JS/rAF fallback
+   in app.js instead (see CSS_PARALLAX_SUPPORTED there). That fallback needs
+   `position: fixed` here so it can move these canvases with one full,
+   self-contained transform per frame (see updateStarParallax()) instead of
+   layering a JS-computed delta on top of the browser's own native scroll —
+   mixing those two was the cause of the one-frame "seam" on old Firefox,
+   since the native part moved instantly with scroll while the JS part
+   lagged by up to a frame behind it. */
+@supports not (animation-timeline: scroll()) {
+    .cosmic-stars {
+        position: fixed;
+    }
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+/* Header / nav */
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(14px);
+    background: rgba(6, 5, 18, 0.55);
+    border-bottom: 1px solid rgba(232, 182, 76, 0.12);
+}
+
+header nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    flex-wrap: wrap;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-head);
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    color: var(--gold-bright);
+}
+
+.brand-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.nav-links {
+    display: flex;
+    gap: 10px;
+    list-style: none;
+    font-size: 14px;
+}
+
+.nav-links a {
+    display: inline-block;
+    padding: 7px 14px;
+    border-radius: 999px;
+    color: var(--text-0);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.nav-links a:hover {
+    color: var(--gold-bright);
+    border-color: var(--card-border-hover);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.lang-switch {
+    position: relative;
+}
+
+#langToggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--card-border);
+    color: var(--text-0);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+#langToggle:hover {
+    border-color: var(--card-border-hover);
+    color: var(--gold-bright);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.lang-switch__caret {
+    width: 10px;
+    height: 10px;
+    transition: transform 0.15s ease;
+}
+
+#langToggle[aria-expanded="true"] .lang-switch__caret {
+    transform: rotate(180deg);
+}
+
+.lang-switch__menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 140px;
+    list-style: none;
+    background: var(--bg-1);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 6px;
+    box-shadow: 0 12px 30px rgba(2, 2, 10, 0.45);
+    z-index: 60;
+}
+
+.lang-switch__menu button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    color: var(--text-1);
+    font-family: var(--font-body);
+    font-size: 13px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.lang-switch__menu button:hover,
+.lang-switch__menu button[aria-selected="true"] {
+    background: rgba(232, 182, 76, 0.1);
+    color: var(--gold-bright);
+}
+
+/* Hero */
+
+#hero {
+    position: relative;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 96px 24px 64px;
+    overflow: hidden;
+}
+
+.hero-badge {
+    position: absolute;
+    top: 28px;
+    right: 24px;
+    width: clamp(84px, 12vw, 140px);
+    height: clamp(84px, 12vw, 140px);
+    z-index: 2;
+}
+
+.hero-badge__webgl {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.hero-badge__fallback {
+    display: none;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.hero-badge--fallback .hero-badge__webgl {
+    display: none;
+}
+
+.hero-badge--fallback .hero-badge__fallback {
+    display: block;
+    animation: hero-badge-spin 6s linear infinite;
+}
+
+@keyframes hero-badge-spin {
+    from { transform: perspective(600px) rotateY(0deg); }
+    to   { transform: perspective(600px) rotateY(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-badge--fallback .hero-badge__fallback {
+        animation: none;
+    }
+}
+
+.eyebrow {
+    display:inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    background: rgba(6, 5, 18, 0.65);
+    border: 1px solid var(--gold-dim);
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 22px;
+}
+
+.eyebrow a {
+    text-decoration: underline;
+    text-decoration-color: var(--gold-dim);
+    text-underline-offset: 2px;
+}
+.eyebrow a:hover {
+    text-decoration-color: currentColor;
+}
+
+#hero h1 {
+    font-family: var(--font-head);
+    font-size: clamp(2.4rem, 6vw, 4.4rem);
+    line-height: 1.05;
+    margin: 0 0 16px;
+    color: var(--gold-bright);
+}
+
+#hero h1 small {
+    display: block;
+    font-family: var(--font-body);
+    font-size: clamp(1rem, 2.4vw, 1.35rem);
+    color: var(--text-1);
+    font-weight: 400;
+    margin-top: 10px;
+}
+
+.lede {
+    max-width: 620px;
+    color: var(--text-1);
+    font-size: 1.08rem;
+    line-height: 1.7;
+    margin-bottom: 30px;
+}
+
+.quote-card {
+    max-width: 520px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-left: 3px solid var(--gold);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 34px;
+    font-style: italic;
+    color: var(--text-1);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.quote-card cite {
+    display: block;
+    margin-top: 6px;
+    color: var(--gold-bright);
+    font-style: normal;
+    font-weight: 600;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    font-family: var(--font-body);
+}
+
+.btn:active { transform: translateY(1px); }
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+    box-shadow: none;
+    transform: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+    color: #241a05;
+    box-shadow: 0 6px 24px rgba(232, 182, 76, 0.28);
+}
+.btn-primary:hover {
+    box-shadow: 0 8px 30px rgba(232, 182, 76, 0.45);
+    transform: translateY(-1px);
+}
+
+.btn-ghost {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: var(--card-border);
+    color: var(--text-0);
+}
+.btn-ghost:hover {
+    border-color: var(--card-border-hover);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+/* Section defaults (shared by about / skills / projects / contact) */
+
+section {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 88px 24px;
+}
+
+section h2 {
+    font-family: var(--font-head);
+    font-size: clamp(1.6rem, 3.4vw, 2.2rem);
+    color: var(--text-0);
+    margin-bottom: 28px;
+}
+
+/* About */
+
+#about p {
+    color: var(--text-1);
+    line-height: 1.85;
+    font-size: 1.02rem;
+    max-width: 720px;
+    margin-bottom: 18px;
+}
+
+#about strong {
+    color: var(--gold-bright);
+    font-weight: 600;
+}
+
+.stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    list-style: none;
+    margin-top: 22px;
+}
+
+.stat-chip {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: var(--text-1);
+}
+
+/* Skills */
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+}
+
+.skill-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 26px;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.skill-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--card-border-hover);
+    box-shadow: 0 0 40px rgba(108, 79, 214, 0.2);
+}
+
+.skill-card h3 {
+    font-family: var(--font-head);
+    font-size: 15px;
+    color: var(--text-0);
+    margin-bottom: 10px;
+}
+
+.skill-card p {
+    color: var(--text-2);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.skill-card a {
+    display: inline-block;
+    margin-top: 14px;
+}
+
+.skill-card em {
+    color: var(--text-2);
+    opacity: 0.8;
+}
+
+/* Projects */
+
+.projects-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.project-card {
+    background: linear-gradient(160deg, rgba(108, 79, 214, 0.08), rgba(255, 255, 255, 0.02));
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 28px;
+    flex: 1 1 calc((100% - 48px) / 3); /* 48px = 2 gaps × 24px; update if gap changes */
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.project-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--card-border-hover);
+    box-shadow: 0 0 40px rgba(108, 79, 214, 0.2);
+}
+
+.project-card h3 {
+    font-family: var(--font-head);
+    font-size: 17px;
+    color: var(--gold-bright);
+}
+
+.project-card p {
+    color: var(--text-1);
+    font-size: 0.92rem;
+    line-height: 1.65;
+}
+
+.project-card .credit {
+    color: var(--text-2);
+    font-size: 0.85rem;
+}
+
+.project-card .credit a {
+    color: var(--gold-bright);
+    text-decoration: underline;
+    text-decoration-color: var(--gold-dim);
+    text-underline-offset: 3px;
+}
+.project-card .credit a:hover {
+    text-decoration-color: var(--gold-bright);
+}
+
+.tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+}
+
+.tag {
+    font-size: 11.5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(232, 182, 76, 0.1);
+    border: 1px solid var(--gold-dim);
+    color: var(--gold-bright);
+}
+
+.status-note {
+    font-size: 12px;
+    color: var(--text-2);
+    margin-top: auto;
+}
+
+/* Pricing */
+
+.currency-switch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+}
+
+.currency-btn {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-1);
+    background: transparent;
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.currency-btn:hover:not(:disabled) {
+    border-color: var(--card-border-hover);
+    color: var(--gold-bright);
+}
+
+.currency-btn.is-active {
+    background: var(--gold-dim);
+    border-color: var(--card-border-hover);
+    color: var(--gold-bright);
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.pricing-card {
+    background: linear-gradient(160deg, rgba(108, 79, 214, 0.08), rgba(255, 255, 255, 0.02));
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.pricing-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--card-border-hover);
+    box-shadow: 0 0 40px rgba(108, 79, 214, 0.2);
+}
+
+.pricing-card h3 {
+    font-family: var(--font-head);
+    font-size: 17px;
+    color: var(--gold-bright);
+}
+
+.pricing-card__range {
+    font-family: var(--font-head);
+    font-size: clamp(1.3rem, 3vw, 1.6rem);
+    color: var(--text-0);
+}
+
+.pricing-card__range .price-currency {
+    font-size: 0.6em;
+    color: var(--text-2);
+    margin-left: 4px;
+}
+
+.pricing-card p {
+    color: var(--text-1);
+    font-size: 0.92rem;
+    line-height: 1.65;
+}
+
+.pricing-card .tag-row {
+    margin-top: auto;
+    padding-top: 6px;
+}
+
+.pricing-updated {
+    color: var(--text-2);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* Pricing — "Advanced" tier: a second, more built-out row below the simple
+   per-item pricing grid, for fully custom website builds. */
+
+.pricing-tier {
+    margin-top: 36px;
+    padding-top: 32px;
+    border-top: 1px solid var(--card-border);
+}
+
+.pricing-tier__heading {
+    font-family: var(--font-head);
+    font-size: clamp(1.2rem, 2.6vw, 1.5rem);
+    color: var(--gold-bright);
+    margin-bottom: 10px;
+}
+
+.pricing-tier__lede {
+    color: var(--text-1);
+    font-size: 0.95rem;
+    line-height: 1.65;
+    max-width: 640px;
+    margin-bottom: 22px;
+}
+
+.pricing-extras {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 6px;
+}
+
+.pricing-extras li {
+    position: relative;
+    padding-left: 16px;
+    color: var(--text-2);
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+
+.pricing-extras li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55rem;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--gold-dim);
+}
+
+.pricing-disclaimer {
+    color: var(--text-2);
+    font-size: 0.85rem;
+    line-height: 1.65;
+    max-width: 680px;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--card-border);
+}
+
+/* Contact */
+
+#contact > p {
+    color: var(--text-1);
+    font-size: 1rem;
+    margin-bottom: 32px;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom:36px;
+}
+
+.contact-item {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 22px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.contact-item h3 {
+    font-family: var(--font-head);
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-2);
+    flex-basis: 100%;
+}
+
+.contact-item a,
+.contact-item span { color: var(--text-0); font-size: 1rem; }
+.contact-item a:hover { color: var(--gold-bright); }
+
+.copy-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+    color: var(--text-1);
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.copy-btn:hover {
+    border-color: var(--card-border-hover);
+    color: var(--gold-bright);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.social-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 360px;
+}
+
+.social-list a {
+    display: block;
+    padding: 10px 16px;
+    border-radius: 10px;
+    color: var(--text-1);
+    font-size: 14px;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+}
+.social-list a:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--card-border-hover);
+    color: var(--gold-bright);
+}
+
+/* Footer */
+
+footer {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+@media (min-width: 560px) {
+    .footer-inner {
+        justify-content: space-between;
+    }
+}
+
+footer p {
+    display: inline-block;
+    color: var(--text-1);
+    font-size: 0.85rem;
+    background: rgba(6, 5, 18, 0.55);
+    backdrop-filter: blur(10px);
+    padding: 8px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+footer p a {
+    color: var(--text-1);
+    text-decoration: underline;
+    text-decoration-color: var(--gold-dim);
+    text-underline-offset: 3px;
+}
+
+footer p a:hover {
+    color: var(--gold-bright);
+}
+
+/* Changelog page */
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-2);
+    font-size: 0.85rem;
+    margin-bottom: 24px;
+    transition: color 0.15s;
+}
+
+.back-link:hover {
+    color: var(--gold-bright);
+}
+
+.section-tag {
+    display: inline-block;
+    font-family: var(--font-head);
+    font-size: 11.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    background: rgba(232, 182, 76, 0.1);
+    border: 1px solid var(--gold-dim);
+    border-radius: 999px;
+    padding: 5px 14px;
+    margin-bottom: 14px;
+}
+
+#changelog h1 {
+    font-family: var(--font-head);
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    color: var(--text-0);
+    margin-bottom: 40px;
+}
+
+#changelog h1 #projectName {
+    color: var(--gold-bright);
+}
+
+.changelog-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.changelog-entry {
+    background: linear-gradient(160deg, rgba(108, 79, 214, 0.16), rgba(10, 8, 20, 0.55));
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 24px 28px;
+}
+
+.changelog-entry h2 {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    font-family: var(--font-head);
+    font-size: 25px;
+    margin-bottom: 14px;
+}
+
+.changelog-version {
+    color: var(--gold-bright);
+}
+
+.changelog-date {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 0.82rem;
+    color: var(--text-2);
+}
+
+.changelog-category {
+    font-family: var(--font-head);
+    font-size: 15px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    margin-top: 22px;
+    margin-bottom: 10px;
+}
+
+.changelog-category:first-of-type {
+    margin-top: 0;
+}
+
+.changelog-changes {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.changelog-changes li {
+    position: relative;
+    padding-left: 18px;
+    color: var(--text-1);
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.changelog-changes li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.65rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+}
+
+.changelog-note {
+    text-align: center;
+    color: var(--text-2);
+    font-size: 0.9rem;
+    padding: 40px 0;
+}
+
+/* Projects — "Digital Business Card" card's own CTA link */
+
+.project-card__cta {
+    align-self: flex-start;
+    margin-top: auto;
+    padding-top: 4px;
+    color: var(--gold-bright);
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+.project-card__cta:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--gold-dim);
+}
+
+/* Contact — button that open the business card modal */
+
+.business-card-trigger {
+    margin-top: 28px;
+}
+
+/* Business card modal + assembly animation */
+
+.card-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.card-modal[hidden] {
+    display: none;
+}
+
+.card-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(6, 5, 18, 0.8);
+    backdrop-filter: blur(4px);
+}
+
+.card-modal__panel {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 26px;
+    width: 100%;
+    max-width: 480px;
+}
+
+.card-modal__close {
+    position: absolute;
+    top: -44px;
+    right: 0;
+    background: none;
+    border: none;
+    color: var(--text-0);
+    font-size: 30px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 6px;
+}
+.card-modal__close:hover {
+    color: var(--gold-bright);
+}
+
+.biz-card {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 7 / 4;
+    border-radius: 18px;
+}
+
+.biz-card__piece {
+    opacity: 0;
+    transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.7s ease;
+}
+
+/* Each piece starts off-screen-ish in its own direction; .is-assembling
+   (toggled by js/app.js when the modal opens) clears every transform back
+   to rest at the same time, staggered per piece via transition-delay below
+   — that stagger, not the start position, is what makes it read as
+   "assembling" rather than a single fade-in. */
+.biz-card__bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--bg-3), var(--bg-1));
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    transform: scale(0.55);
+}
+
+.biz-card__logo {
+    position: absolute;
+    top: 6%;
+    left: 6%;
+    width: 15%;
+    aspect-ratio: 1;
+    object-fit: contain;
+    transform: translate(-140px, -90px) rotate(-35deg);
+}
+
+.biz-card__name {
+    position: absolute;
+    top: 6%;
+    right: 6%;
+    text-align: right;
+    transform: translate(150px, -70px);
+}
+.biz-card__fullname {
+    display: block;
+    font-family: var(--font-head);
+    color: var(--gold-bright);
+    font-size: clamp(1rem, 3.4vw, 1.35rem);
+}
+.biz-card__handle {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--text-1);
+    margin-top: 2px;
+}
+
+.biz-card__contact {
+    position: absolute;
+    left: 6%;
+    bottom: 22%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: clamp(0.72rem, 2vw, 0.86rem);
+    color: var(--text-1);
+    transform: translate(-110px, 70px);
+}
+
+.biz-card__tags {
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    bottom: 6%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    transform: translateY(90px);
+}
+.biz-card__tags li {
+    font-size: clamp(0.6rem, 1.6vw, 0.7rem);
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(232, 182, 76, 0.1);
+    border: 1px solid var(--gold-dim);
+    color: var(--gold-bright);
+}
+
+.biz-card.is-assembling .biz-card__piece {
+    opacity: 1;
+    transform: none;
+}
+.biz-card.is-assembling .biz-card__bg { transition-delay: 0s; }
+.biz-card.is-assembling .biz-card__logo { transition-delay: 0.15s; }
+.biz-card.is-assembling .biz-card__name { transition-delay: 0.3s; }
+.biz-card.is-assembling .biz-card__contact { transition-delay: 0.45s; }
+.biz-card.is-assembling .biz-card__tags { transition-delay: 0.6s; }
+
+.card-modal__download {
+    opacity: 0;
+    transform: translateY(-14px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+}
+.card-modal__download.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
