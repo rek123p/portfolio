@@ -16,14 +16,18 @@ jobs:
 
       - name: Fetch and update rates
         run: |
-          if curl -sf "https://api.frankfurter.app/latest?from=PLN&to=EUR,USD,GBP" -o /tmp/frankfurter.json; then
+          if curl -sf "https://api.frankfurter.dev/v2/rates?base=pln&quotes=eur,usd,gbp" -o /tmp/frankfurter.json; then
             node -e "
               const fs = require('fs');
               const raw = JSON.parse(fs.readFileSync('/tmp/frankfurter.json', 'utf8'));
+              const rates = { PLN: 1 };
+              for (const entry of raw) {
+                rates[entry.quote.toUpperCase()] = entry.rate;
+              }
               const out = {
                 updated: new Date().toISOString(),
                 base: 'PLN',
-                rates: { PLN: 1, ...raw.rates }
+                rates
               };
               fs.writeFileSync('data/rates.json', JSON.stringify(out, null, 2) + '\n');
             "
