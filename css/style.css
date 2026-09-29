@@ -443,6 +443,108 @@ header nav {
     color: var(--gold-bright);
 }
 
+.version-switch {
+    position: relative;
+    display: inline-flex;
+    margin-bottom: 32px;
+}
+
+#versionToggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--card-border);
+    color: var(--text-0);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+#versionToggle:hover {
+    border-color: var(--card-border-hover);
+    color: var(--gold-bright);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.version-switch__caret {
+    width: 10px;
+    height: 10px;
+    transition: transform 0.15s ease;
+}
+
+#versionToggle[aria-expanded="true"] .version-switch__caret {
+    transform: rotate(180deg);
+}
+
+.version-switch__menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 220px;
+    background: var(--bg-1);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 12px 30px rgba(2, 2, 10, 0.45);
+    z-index: 60;
+}
+
+.version-switch__search {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--card-border);
+    color: var(--text-0);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.version-switch__search:focus {
+    outline: none;
+    border-color: var(--gold-dim);
+}
+
+.version-switch__list {
+    list-style: none;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.version-switch__list button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    color: var(--text-1);
+    font-family: var(--font-body);
+    font-size: 13px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.version-switch__list button:hover,
+.version-switch__list button[aria-selected="true"] {
+    background: rgba(232, 182, 76, 0.1);
+    color: var(--gold-bright);
+}
+
+.version-switch__empty {
+    color: var(--text-2);
+    font-size: 12.5px;
+    padding: 8px 10px 4px;
+}
+
 /* Hero */
 
 #hero {
@@ -1095,7 +1197,7 @@ footer p a:hover {
     font-family: var(--font-head);
     font-size: clamp(1.8rem, 4vw, 2.6rem);
     color: var(--text-0);
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 
 #changelog h1 #projectName {

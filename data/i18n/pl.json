@@ -121,6 +121,9 @@
     "changelog.backLink": "← Wróć do projektów",
     "changelog.empty": "Brak informacji o wydaniu.",
     "changelog.error": "Nie udało się wczytać informacji o wydaniu. Sprawdź link i spróbuj ponownie.",
+    "changelog.versionLabel": "Wersja:",
+    "changelog.versionSearchPlaceholder": "Szukaj wersji...",
+    "changelog.versionSearchEmpty": "Brak pasujących wersji.",
 
     "credits.tag": "Źródła",
     "credits.backLink": "← Wróć do portfolio",

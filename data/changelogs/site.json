@@ -3,6 +3,38 @@
     "projectDisplay": { "en": "Portfolio Site", "pl": "Strona portfolio" },
     "versions": [
         {
+            "version": "1.1.0",
+            "date": "2026-09-29",
+            "categories": [
+                {
+                    "name": { "en": "Interactive features", "pl": "Funkcje interaktywne" },
+                    "changes" : {
+                        "en": [
+                            "Release notes now show one version at a time, picked from a dropdown with a built-in search box, instead of one continuously growing list — the newest version is shown by default."
+                        ],
+                        "pl": [
+                            "Informacje o wydaniu pokazują teraz jedną wersję naraz, wybieraną z rozwijanej listy z wbudowaną wyszukiwarką, zamiast jednej, stale rosnącej listy — domyślnie widoczna jest najnowsza wersja."
+                        ]
+                    }
+                },
+                {
+                    "name": { "en": "Performance & technical details", "pl": "Wydajność i szczegóły techniczne" },
+                    "changes": {
+                        "en": [
+                            "The \"My time / Your time\" clock comparison now refreshes exactly on the real minute boundary instead of up to 59 seconds after it, so the displayed time is accurate right from page load.",
+                            "The currency-rate refresh (GitHub Actions) now runs at four fixed times a day (00:00, 06:00, 12:00, 18:00 UTC) instead of hourly — a more predictable schedule given ongoing, platform-wide scheduling delays affecting GitHub Actions' hourly triggers.",
+                            "The footer's version number is now read automatically from the highest version in the release notes data (data/changelogs/site.json) instead of being hardcoded separately on every page, so it can no longer drift out of sync with the actual latest release."
+                        ],
+                        "pl": [
+                            "Porównanie zegarków \"Mój czas / Twój czas\" odświeża się teraz dokładnie na granicy rzeczywistej minuty zamiast z opóźnieniem do 59 sekund, dzięki czemu wyświetlany czas jest dokładny od razu po wczytaniu strony.",
+                            "Automatyczne odświeżanie kursów walut (GitHub Actions) działa teraz w czterech stałych porach dziennie (0:00, 6:00, 12:00, 18:00 UTC) zamiast co godzinę — bardziej przewidywalny harmonogram, biorąc pod uwagę trwające, ogólnoplatformowe opóźnienia w harmonogramowaniu godzinowych wyzwalaczy GitHub Actions.",
+                            "Numer wersji w stopce jest teraz automatycznie odczytywany z najwyższej wersji w danych informacji o wydaniu (data/changelogs/site.json), zamiast być osobno wpisywany na sztywno na każdej stronie — dzięki temu nie może się już rozjechać z faktyczną najnowszą wersją."
+                        ]
+                    }
+                }
+            ]
+        },
+        {
             "version": "1.0.0",
             "date": "2026-09-28",
             "categories": [

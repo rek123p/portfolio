@@ -22,7 +22,8 @@ release notes pages.
  - Live clock comparison (your local time vs. mine).
  - One-click copy for contact details.
  - A Pricing section with live currency conversion (PLN/EUR/USD/GBP), backed
-   by exchange rates refreshed hourly through a GitHub Actions workflow.
+   by exchange rates refreshed four times a day (00:00/06:00/12:00/18:00 UTC)
+   through a GitHub Actions workflow.
  - Digital Business Card: an animated, exportable business card built
    directly into the site.
  - Per-project Release Notes pages, driven by JSON (`data/changelogs/`), not
@@ -61,8 +62,8 @@ js/vendor/                   Vendored third-party libraries (Three.js)
 data/i18n/                   Language manifest + per-language dictionaries
 data/changelogs/             Per-project release notes data (JSON)
 data/images/                 Textures, frame sequences, disc fallback images
-data/rates.json              Currency exchange rates (auto-refreshed hourly)
-.github/workflows/           GitHub Actions (hourly currency rate refresh)
+data/rates.json              Currency exchange rates (auto-refreshed 4x/day)
+.github/workflows/           GitHub Actions (currency rate refresh, 4x/day)
 icons/                       Favicons / touch icons / brand logo source
 ```
 
@@ -82,6 +83,10 @@ python3 -m http.server
 ```
 
 then open `http://localhost:8000`.
+
+## Known Issues
+
+Known bugs, rough edges and things that need further work are tracked in [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) rather than cluttering this README.
 
 ## License
 

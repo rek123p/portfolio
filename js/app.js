@@ -305,7 +305,17 @@ function updateClocks() {
 }
 
 updateClocks();
-setInterval(updateClocks, 60 * 1000);
+
+// Phase-lock the refresh to the real wall-clock minute boundary: a single
+// setTimeout waits out whatever's left of the current minute, then a
+// regular setInterval takes over from exactly that boundary — otherwise
+// the display could lag up to 59s behind the real time (interval counted
+// from page load, not from the actual minute actually changing).
+const msUntilNextMinute = 60000 - (Date.now() % 60000);
+setTimeout(() => {
+    updateClocks();
+    setInterval(updateClocks, 60 * 1000);
+}, msUntilNextMinute);
 
 // ---------------------------------------------------------------------------
 // Pricing — live currency conversion + "last updated" readout
@@ -867,3 +877,51 @@ downloadCardBtn?.addEventListener("click", async () => {
         downloadCardBtn.disabled = false;
     }
 });
+
+// ---------------------------------------------------------------------------
+// Footer version — auto-derived from data/changelogs/site.json's highest
+// version, so it never has to be bumped by hand across every page again.
+// Shared with changelog.js (loaded after this file) instead of duplicated —
+// same reasoning as translate()/setLanguage() already being shared.
+// ---------------------------------------------------------------------------
+
+// Compares two "x.y.z"-style version strings numerically, part by part —
+// safer than a plain string sort, which would put "1.10.0" before "1.9.0"
+// (string comparison on "10" vs "9").
+function compareVersions(a, b) {
+    const partsA = String(a).split(".").map(Number);
+    const partsB = String(b).split(".").map(Number);
+    const len = Math.max(partsA.length, partsB.length);
+    for (let i = 0; i < len; i++) {
+        const diff = (partsA[i] || 0) - (partsB[i] || 0);
+        if (diff !== 0) return diff;
+    }
+    return 0;
+}
+
+const footerVersionEls = document.querySelectorAll(".footer-version");
+
+async function updateFooterVersion() {
+    if (!footerVersionEls.length) return;
+    try {
+        const res = await fetch("data/changelogs/site.json");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const versions = Array.isArray(data.versions) ? data.versions : [];
+        if (!versions.length) return;
+
+        const highest = versions.reduce((best, v) =>
+            compareVersions(v.version, best.version) > 0 ? v : best
+        );
+        footerVersionEls.forEach((el) => {
+            el.textContent = `v${highest.version}`;
+        });
+    } catch (err) {
+        // site.json ships as part of the site's own files, so this should be
+        // near-impossible in practice — but if it ever does fail, the footer
+        // just keeps its "v—" placeholder instead of showing a stale number.
+        console.warn("Failed to load site version:", err);
+    }
+}
+
+updateFooterVersion();

@@ -60,6 +60,21 @@
         <span class="section-tag" data-i18n="changelog.tag">Release Notes</span>
         <h1><span data-i18n="changelog.heading">Release Notes — </span><span id="projectName">_</span></h1>
 
+        <div class="version-switch">
+            <button id="versionToggle" type="button" aria-haspopup="listbox" aria-expanded="false">
+                <span data-i18n="changelog.versionLabel">Version:</span>
+                <span id="versionCurrent">—</span>
+                <svg class="version-switch__caret" viewBox="0 0 12 8" aria-hidden="true">
+                    <path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+            <div id="versionMenu" class="version-switch__menu" hidden>
+                <input id="versionSearch" type="text" class="version-switch__search" autocomplete="off" />
+                <ul id="versionList" class="version-switch__list" role="listbox"></ul>
+                <p id="versionSearchEmpty" class="version-switch__empty" hidden data-i18n="changelog.versionSearchEmpty">No versions match.</p>
+            </div>
+        </div>
+
         <div id="changelogList" class="changelog-list"></div>
 
         <p id="changelogEmpty" class="changelog-note" hidden data-i18n="changelog.empty">No release notes yet.</p>
@@ -75,7 +90,7 @@
             <span data-i18n="footer.rights">All rights reserved.</span>
         </p>
         <p>
-            <span class="footer-version">v1.0.0</span>
+            <span class="footer-version">v—</span>
             ·
             <a href="credits.html" data-i18n="footer.credits">Credits</a>
             ·
