@@ -447,13 +447,18 @@ setInterval(refreshPricingUpdatedText, 30 * 1000);
 // ---------------------------------------------------------------------------
 // Cosmic background — star field (3 parallax depth layers)
 // ---------------------------------------------------------------------------
-
-// Where supported, the parallax transform itself is driven natively by CSS
-// (see .cosmic-stars / @keyframes star-parallax is style.css) — running on
-// the compositor with zero JS involved per frame. This flag decides whether
-// the JS/rAF fallback below needs to drive it too (it must not do both at
-// once, or JS and CSS would fight over the same `transform`).
-const CSS_PARALLAX_SUPPORTED = CSS.supports("animation-timeline", "scroll()");
+//
+// Canvases are sized to the VIEWPORT, not the full page, and redrawn as the
+// page scrolls (throttled via requestAnimationFrame) — not driven by a
+// native CSS scroll-linked animation on a page-tall canvas. That native-CSS
+// approach looked like the lighter option on paper (zero JS per frame
+// browsers that support it, Chrome included), but turned out to be the
+// actual cause of severe mobile Chrome stutter: a composited layer as
+// tall as the entire page is expensive for the browser to manage during
+// scroll regardless of how little (or how efficiently) is drawn onto it —
+// confirmed by direct testing on a real device: shrinking the canvas to
+// viewport height alone, with none of the drawing logic changed, fixed it.
+// Both browsers now share this one JS-driven mechanism instead of branching.
 
 const STAR_LAYERS = [
     {
@@ -512,8 +517,8 @@ function pageHeight() {
     );
 }
 
-function buildStars(layer, cssWidth, cssHeight) {
-    const area = cssWidth * cssHeight;
+function buildStars(layer, cssWidth, pageH) {
+    const area = cssWidth * pageH;
     const count = Math.round((area / 1_000_000) * layer.density);
     const stars = [];
 
@@ -525,7 +530,7 @@ function buildStars(layer, cssWidth, cssHeight) {
 
         stars.push({
             x: Math.random() * cssWidth,
-            y: Math.random() * cssHeight,
+            y: Math.random() * pageH, // position is Page space, not viewport space
             r: layer.radius[0] + t * (layer.radius[1] - layer.radius[0]),
             baseAlpha: layer.alpha[0] + t * (layer.alpha[1] - layer.alpha[0]),
             color: pickStarColor(),
@@ -538,12 +543,20 @@ function buildStars(layer, cssWidth, cssHeight) {
     return stars;
 }
 
-function drawStars(ctx, cssWidth, cssHeight, stars, now) {
+// yOffset converts a star's page-space Y into this frame's on-screen Y —
+// cssHeight here is the VIEWPORT height (see setupStarLayer), not the page
+// height. A little slack beyond the edges so a star isn't abruptly clipped
+// mid-circle right at the boundary.
+function drawStars(ctx, cssWidth, cssHeight, stars, now, yOffset) {
     if (!ctx) return;
 
     ctx.clearRect(0, 0, cssWidth, cssHeight);
 
+    const EDGE_SLACK = 40;
     for (const star of stars) {
+        const y = star.y - yOffset;
+        if (y < -EDGE_SLACK || y > cssHeight + EDGE_SLACK) continue;
+
         let alpha = star.baseAlpha;
         if (star.twinkle) {
             alpha *= 0.55 + 0.45 * Math.sin(now * star.speed + star.phase);
@@ -553,21 +566,14 @@ function drawStars(ctx, cssWidth, cssHeight, stars, now) {
         ctx.beginPath();
         if (star.r > 1.5) {
             // brighter/nearer stars get a soft glow instead of a hard dot
-            const glow = ctx.createRadialGradient(
-                star.x,
-                star.y,
-                0,
-                star.x,
-                star.y,
-                star.r * 3
-            );
+            const glow = ctx.createRadialGradient(star.x, y, 0, star.x, y, star.r * 3);
             glow.addColorStop(0, `rgba(${star.color}, ${alpha})`);
             glow.addColorStop(1, `rgba(${star.color}, 0)`);
             ctx.fillStyle = glow;
-            ctx.arc(star.x, star.y, star.r * 3, 0, Math.PI * 2);
-        }   else {
+            ctx.arc(star.x, y, star.r * 3, 0, Math.PI * 2);
+        } else {
             ctx.fillStyle = `rgba(${star.color}, ${alpha})`;
-            ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+            ctx.arc(star.x, y, star.r, 0, Math.PI * 2);
         }
         ctx.fill();
     }
@@ -582,121 +588,101 @@ function sizeCanvas(canvas, cssWidth, cssHeight, dpr) {
     return ctx;
 }
 
+// How far this layer's star field has scrolled past, in its own
+// (parallax-damped) coordinate space — the amount by which a star's
+// page-space Y needs to be shifted to land in the current viewport.
+function layerShift(layer) {
+    return window.scrollY * (1 - layer.parallaxDamp);
+}
+
+function redrawStarLayer(layer, now) {
+    const shift = layerShift(layer);
+    drawStars(layer.ctx, layer.cssWidth, layer.viewportHeight, layer.staticStars, now, shift);
+    drawStars(layer.twinkleCtx, layer.cssWidth, layer.viewportHeight, layer.twinkleStars, now, shift);
+}
+
+// Extra padding added to each canvas's height on top of the current
+// viewport — a mobile browser's address bar hiding/showing as you scroll
+// changes window.innerHeight on practically every scroll direction change,
+// and without this buffer that was forcing a full canvas resize (and with
+// it, a visible redraw) every single time, 150px covers the typical mobile
+// toolbar height with room to spare, so ordinary toolbar toggling now needs
+// no resize at all — only a genuinely different viewport (real resize,
+// orientation change) does.
+const TOOLBAR_BUFFER = 150;
+
 function setupStarLayer(layer) {
     if (!layer.canvas) return;
 
-    const dpr = window.devicePixelRatio || 1;
+    // Capped the same way the WebGL canvases (cosmic-webgl.js, shark-logo.js)
+    // already cap theirs.
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const cssWidth = window.innerWidth;
-    const cssHeight = pageHeight();
-    const now = performance.now();
+    const pageH = pageHeight();
+    const viewportHeight = window.innerHeight + TOOLBAR_BUFFER;
 
     layer.cssWidth = cssWidth;
-    layer.cssHeight = cssHeight;
+    layer.viewportHeight = viewportHeight;
 
-    const allStars = buildStars(layer, cssWidth, cssHeight);
+    const allStars = buildStars(layer, cssWidth, pageH);
     // split once here so the recurring twinkle redraw never has to touch (or
     // even iterate past) the static majority of stars
     layer.staticStars = allStars.filter((s) => !s.twinkle);
     layer.twinkleStars = allStars.filter((s) => s.twinkle);
 
-    layer.ctx = sizeCanvas(layer.canvas, cssWidth, cssHeight, dpr);
-    layer.twinkleCtx = sizeCanvas(layer.twinkleCanvas, cssWidth, cssHeight, dpr);
+    // Canvases are sized to the viewport, not the page — see the comment at
+    // the top of this section.
+    layer.ctx = sizeCanvas(layer.canvas, cssWidth, viewportHeight, dpr);
+    layer.twinkleCtx = sizeCanvas(layer.twinkleCanvas, cssWidth, viewportHeight, dpr);
 
-    // Browsers without native scroll-linked CSS animations render these
-    // canvases `position: fixed` instead of `absolute` (see the
-    // `@supports not (...)` block in  style.css). `position: fixed`'s
-    // containing block is the viewport, so the stylesheets's `width/height:
-    // 100%` would size the canvas to one viewport instead of the full page —
-    // set the real page height explicitly here to override that.
-    if (!CSS_PARALLAX_SUPPORTED) {
-        layer.canvas.style.width = `${cssWidth}px`;
-        layer.canvas.style.height = `${cssHeight}px`;
-        if (layer.twinkleCanvas) {
-            layer.twinkleCanvas.style.width = `${cssWidth}px`;
-            layer.twinkleCanvas.style.height = `${cssHeight}px`;
-        }
-    }
-
-    drawStars(layer.ctx, cssWidth, cssHeight, layer.staticStars, now);
-    drawStars(layer.twinkleCtx, cssWidth, cssHeight, layer.twinkleStars, now);
-
-    // Endpoint for the CSS-driven scroll-timeline animation (and for the JS
-    // fallback below) — how far this layer should have shifted by the time
-    // the page is scrolled all the way to the bottom. Set on both canvases so
-    // they stay perfectly aligned with each other.
-    const maxScrollY = Math.max(0, cssHeight - window.innerHeight);
-    const parallaxEnd = `${maxScrollY * layer.parallaxDamp}px`;
-    layer.canvas.style.setProperty("--parallax-end", parallaxEnd);
-    if (layer.twinkleCanvas) {
-        layer.twinkleCanvas.style.setProperty("--parallax-end", parallaxEnd);
-    }
+    redrawStarLayer(layer, performance.now());
 }
 
 function regenerateAllStars() {
     STAR_LAYERS.forEach(setupStarLayer);
 }
 
-function twinkleTick(now) {
-    STAR_LAYERS.forEach((layer) => {
-        if (layer.twinkleStars && layer.twinkleStars.length) {
-            drawStars(
-                layer.twinkleCtx,
-                layer.cssWidth,
-                layer.cssHeight,
-                layer.twinkleStars,
-                now
-            );
-        }
-    });
-}
-
-// JS fallback only — used on browsers that don't support scroll-linked CSS
-// animations (see CSS_PARALLAX_SUPPORTED above). These canvases are
-// `position: fixed` in that case (see style.css), so nothing moves them on its own — the transform below is the entire on-screen offset, computed
-// fresh from the current scroll position every frame, not a delta layered on
-// top of browser's own (separately-timed) scroll movement. That's what
-// removes the one-frame seam the old absolute+delta approach had.
-function updateStarParallax() {
-    const scrollY = window.scrollY;
-    STAR_LAYERS.forEach((layer) => {
-        const offset = `translateY(${-scrollY * (1 - layer.parallaxDamp)}px)`;
-        if (layer.canvas) layer.canvas.style.transform = offset;
-        if (layer.twinkleCanvas) layer.twinkleCanvas.style.transform = offset;
-    });
-}
-
 if (STAR_LAYERS.some((layer) => layer.canvas)) {
     regenerateAllStars();
-    if (!CSS_PARALLAX_SUPPORTED) updateStarParallax();
 
-    // One rAF loop drives whatever still needs JS every frame: the twinkle
-    // redraw always, and — only as a fallback where native scroll-linked CSS
-    // animations aren't supported — the parallax transform too.
+    // One rAF loop redraws whichever layers need it: on every scroll change
+    // (position moved), and at least every ~120ms regardless (so twinkle
+    // alpha keeps animating even while standing still).
     let lastScrollY = window.scrollY;
-    let lastTwinkleAt = 0;
+    let lastRedrawAt = 0;
+
+    const MIN_SCROLL_REDRAW_INTERVAL = 16; // caps scroll-driven redraw at ~60/sec, even on 120Hz+ displays
 
     function frameLoop(now) {
-        if (!CSS_PARALLAX_SUPPORTED && window.scrollY !== lastScrollY) {
+        const scrolled = window.scrollY !== lastScrollY;
+        const readyForScroll = now - lastRedrawAt >= MIN_SCROLL_REDRAW_INTERVAL;
+        const dueForTwinkle = now - lastRedrawAt >= 120;
+        if (scrolled && readyForScroll || dueForTwinkle) {
             lastScrollY = window.scrollY;
-            updateStarParallax();
-        }
-        // twinkle redraw is throttled internally — still no need for 60fps, and
-        // now it only ever touches the small twinkling subset of stars on its
-        // own canvas, not the whole layer
-        if (now - lastTwinkleAt >= 120) {
-            lastTwinkleAt = now;
-            twinkleTick(now);
+            lastRedrawAt = now;
+            STAR_LAYERS.forEach((layer) => redrawStarLayer(layer, now));
         }
         requestAnimationFrame(frameLoop);
     }
     requestAnimationFrame(frameLoop);
 
-    // regenerate on resize (debounced) — new viewport width / page height
-    // means a new star layout (and a new --parallax-end endpoint)
+    // Resize only triggers a full regenerate (new star layout, new canvas
+    // size) when something actually changed beyoond the toolbar buffer above
+    // — a real width change, or a height change bigger than what that
+    // buffer absorbs. Ordinary mobile address-bar toggling no longer does
+    // anything here at all.
     let starResizeTimer = null;
     window.addEventListener("resize", () => {
         clearTimeout(starResizeTimer);
-        starResizeTimer = setTimeout(regenerateAllStars, 250);
+        starResizeTimer = setTimeout(() => {
+            const needsRegenerate = STAR_LAYERS.some(
+                (layer) =>
+                    layer.canvas &&
+                    (window.innerWidth !== layer.cssWidth ||
+                        window.innerHeight > layer.viewportHeight)
+            );
+            if (needsRegenerate) regenerateAllStars();
+        }, 250);
     });
 
     // fonts/images finishing loading can change the page's final height —

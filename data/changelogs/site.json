@@ -3,6 +3,40 @@
     "projectDisplay": { "en": "Portfolio Site", "pl": "Strona portfolio" },
     "versions": [
         {
+            "version": "1.2.0",
+            "date": "2026-10-02",
+            "categories": [
+                {
+                    "name": { "en": "Performance & technical details", "pl": "Wydajność i szczegóły techniczne" },
+                    "changes": {
+                        "en": [
+                            "The parallax starfield background has been rewritten: canvases are now sized to the viewport instead of the full page height, and redraw via JavaScript on scroll instead of a native CSS scroll-linked animation — this turned out to be the actual cause of the severe Chrome-mobile stutter and black-screen-during-fast-scroll bug reported after v1.1.0, not the WebGL cosmic bodies it was originally suspected to be.",
+                            "The starfield no longer regenerates itself every time a mobile browser's address bar shows or hides during scroll, removing a source of visible redraw jumps and extra lag on phones.",
+                            "Starfield redraws are now capped to roughly 60 per second, fixing a slight scroll stutter on high-refresh-rate desktop monitors introduced by the rewrite above."
+                        ],
+                        "pl": [
+                            "Przebudowano tło z migoczącymi gwiazdami: canvasy są teraz dopasowane do rozmiaru widocznego okna zamiast całej wysokości strony i odświeżają się przez JavaScript podczas scrollowania zamiast przez natywną animację CSS powiązaną ze scrollem — to właśnie to, a nie podejrzewane wcześniej kosmiczne ciała WebGL, okazało się faktyczną przyczyną silnego zacinania i czarnego tła podczas szybkiego scrollowania na mobilnym Chrome, zgłoszonego po v1.1.0.",
+                            "Pole gwiazd nie generuje się już od nowa przy każdym pokazaniu lub schowaniu paska adresu w mobilnej przeglądarce podczas scrollowania, co usuwa widoczne skoki w rysowaniu i dodatkowe lagi na telefonach.",
+                            "Odświeżanie gwiazd jest teraz ograniczone do około 60 razy na sekundę, co naprawia drobne zacinanie scrolla na monitorach o wysokim odświeżaniu, wprowadzone przez powyższą przebudowę."
+                        ]
+                    }
+                },
+                {
+                    "name": { "en": "Design & visuals", "pl": "Design i wizualia" },
+                    "changes": {
+                        "en": [
+                            "Email and Discord contact cards now stack into a column on narrow cards instead of staying in a row and letting the email address wrap mid-word — the switch is based on the card's own available width rather than a fixed screen-width breakpoint, so it reacts correctly regardless of how many columns the layout is currently showing.",
+                            "Card backgrounds across the site (skills, projects, pricing, contact, and the hero quote) are noticeably darker, for better contrast against the starfield behind them."
+                        ],
+                        "pl": [
+                            "Karty kontaktowe (mail i Discord) układają się teraz w kolumnę na wąskich kartach zamiast zostawać w rzędzie i łamać adres e-mail w połowie wyrazu — przełączenie opiera się na faktycznej dostępnej szerokości samej karty, a nie na sztywnym progu szerokości ekranu, więc działa poprawnie niezależnie od tego, ile kolumn aktualnie pokazuje układ.",
+                            "Tła kart na stronie (umiejętności, projekty, cennik, kontakt oraz cytat w Hero) są wyraźnie ciemniejsze, dla lepszego kontrastu na tle gwiazd."
+                        ]
+                    }
+                }
+            ]
+        },
+        {
             "version": "1.1.0",
             "date": "2026-09-29",
             "categories": [

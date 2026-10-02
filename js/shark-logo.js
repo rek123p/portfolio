@@ -96,6 +96,13 @@ function setupScene(THREE, wrap, canvas) {
         wrap.classList.add("hero-badge--fallback");
         return;
     }
+
+    // Same adaptive downgrade cosmic-webgl.js already has — starts optimistic
+    // (device pixel ratio, capped at 2x) and self-downgrades at runtime if
+    // measured render time shows the device struggling (see
+    // maybeDowngradeQuality() below), instead of only ever using a fixed cap.
+    let currentPixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const MIN_PIXEL_RATIO = 1;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.55));
@@ -158,6 +165,48 @@ function setupScene(THREE, wrap, canvas) {
     let lastFrameTime = 0;
     let t = 0;
 
+    const SAMPLE_SIZE = 20;
+    let sampleTotal = 0;
+    let sampleCount = 0;
+
+    // If pixel ratio is already at the floor and the device is STILL
+    // struggling for several consecutive sample windows in a row (not just
+    // one — a brief scroll-induced spike shouldn't decide this), it
+    // genuinely can't sustain the live badge at any quality worth
+    // rendering. Stop and drop to the CSS flat-spin fallback instead of
+    // leaving it chugging forever.
+    let stuckAtMinCount = 0;
+    const STUCK_LIMIT = 3;
+
+    function dropToFallback() {
+        stop();
+        wrap.classList.add("hero-badge--fallback");
+        renderer.dispose();
+        renderer.forceContextLoss();
+    }
+
+    function maybeDowngradeQuality(elapsedMs) {
+        sampleTotal += elapsedMs;
+        sampleCount += 1;
+        if (sampleCount < SAMPLE_SIZE) return;
+        const avg = sampleTotal  / sampleCount;
+        sampleTotal = 0;
+        sampleCount = 0;
+        if (avg <= 20) {
+            stuckAtMinCount = 0;
+            return;
+        }
+        if (currentPixelRatio > MIN_PIXEL_RATIO) {
+            currentPixelRatio = Math.max(MIN_PIXEL_RATIO, currentPixelRatio - 0.5);
+            renderer.setPixelRatio(currentPixelRatio);
+            return;
+        }
+        stuckAtMinCount += 1;
+        if (stuckAtMinCount >= STUCK_LIMIT) {
+            dropToFallback();
+        }
+    }
+
     function resize() {
         const w = canvas.clientWidth || 1;
         const h = canvas.clientHeight || 1;
@@ -177,8 +226,9 @@ function setupScene(THREE, wrap, canvas) {
         t += FRAME_INTERVAL_MS / 1000;
         root.rotation.y = t * 0.6;
         root.rotation.x = Math.sin(t * 0.4) * 0.08;
-        resize();
+        const renderStart = performance.now();
         renderer.render(scene, camera);
+        maybeDowngradeQuality(performance.now() - renderStart);
     }
 
     function start() {
@@ -193,6 +243,16 @@ function setupScene(THREE, wrap, canvas) {
         if (rafId !== null) cancelAnimationFrame(rafId);
         rafId = null;
     }
+
+    // ResizeObserver instead of calling resize() every rendered frame (the
+    // old approach) — same pattern as cosmic-webgl.js. Reading
+    // clientWidth/clientHeight and reallocating the WebGL framebuffer 30x/sec
+    // regardless of whether the size actually changed was wasted work every
+    // frame, and forced-layout reads fighting the browser's own layout work
+    // during scroll (especially Chrome's dynamic toolbar on mobile) is a
+    // classic jank source.
+    const ro = new ResizeObserver(resize);
+    ro.observe(canvas);
 
     resize();
     renderer.render(scene, camera);
@@ -219,8 +279,6 @@ function setupScene(THREE, wrap, canvas) {
         );
         io.observe(wrap);
     }
-
-    window.addEventListener("resize", resize);
 }
 
 function initHeroBadge() {

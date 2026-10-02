@@ -383,6 +383,28 @@ async function initCosmicWebgl() {
   let sampleTotal = 0;
   let sampleCount = 0;
 
+  // If pixel ratio is already at the floor and the device is STILL
+  // struggling for several consecutive sample windows in a row (not just
+  // one — a brief scroll-induced spike shouldn't trigger this), the device
+  // genuinely can't sustain live WebGL at any quality we're willing to
+  // render at. Stop asking it to, and drop to the pre-rendered frame
+  // sequence (tier 2) instead — same fallback already used for a missing
+  // WebGL context or a failed init, just erached at runtime instead of at
+  // startup.
+  let stuckAtMinCount = 0;
+  const STUCK_LIMIT = 3;
+  let animating = true;
+
+  function dropToFrameFallback() {
+    animating = false;
+    document.documentElement.classList.remove("cosmic-webgl-active");
+    instances.forEach((inst) => {
+      inst.renderer.dispose();
+      inst.renderer.forceContextLoss();
+    });
+    initFrameFallback();
+  }
+
   function maybeDowngradeQuality(elapsedMs) {
     sampleTotal += elapsedMs;
     sampleCount += 1;
@@ -390,9 +412,18 @@ async function initCosmicWebgl() {
     const avg = sampleTotal / sampleCount;
     sampleTotal = 0;
     sampleCount = 0;
-    if (avg > 20 && currentPixelRatio > MIN_PIXEL_RATIO) {
+    if (avg <= 20) {
+      stuckAtMinCount = 0;
+      return;
+    }
+    if (currentPixelRatio > MIN_PIXEL_RATIO) {
       currentPixelRatio = Math.max(MIN_PIXEL_RATIO, currentPixelRatio - 0.5);
       instances.forEach((inst) => inst.renderer.setPixelRatio(currentPixelRatio));
+      return;
+    }
+    stuckAtMinCount += 1;
+    if (stuckAtMinCount >= STUCK_LIMIT) {
+      dropToFrameFallback();
     }
   }
 
@@ -406,9 +437,32 @@ async function initCosmicWebgl() {
     if (!document.hidden) clock.getDelta();
   });
 
+  // Also pause while actively, rapidly scrolling — rendering 3 WebGL scenes
+  // on top of the browser's own scroll/compositing work is exactly the
+  // combination that was producing the dark/delayed redraw on mobile
+  // Chrome, and the rotation isn't perceptible during a fast scroll anyway.
+  // Same discard-one-delta trick as the tab-hidden case above, so resuming
+  // doesn't jump by the whole paused duration.
+  let isScrolling = false;
+  let scrollEndTimer = null;
+  window.addEventListener(
+    "scroll",
+    () => {
+      isScrolling = true;
+      clearTimeout(scrollEndTimer);
+      scrollEndTimer = setTimeout(() => {
+        isScrolling = false;
+        clock.getDelta();
+      }, 150);
+    },
+    { passive: true }
+  );
+
   function animate(now) {
+    if (!animating) return;
     requestAnimationFrame(animate);
     if (document.hidden) return;
+    if (isScrolling) return;
     if (now - lastRenderTime < FRAME_INTERVAL_MS) return;
 
     const dt = clock.getDelta();
