@@ -911,3 +911,20 @@ async function updateFooterVersion() {
 }
 
 updateFooterVersion();
+
+(function () {
+    const header = document.querySelector('header');
+    if (!header) return;
+
+    const setHeaderHeightVar = () => {
+        document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
+    };
+
+    setHeaderHeightVar();
+
+    if (window.ResizeObserver) {
+        new ResizeObserver(setHeaderHeightVar).observe(header);
+    } else {
+        window.addEventListener('resize', setHeaderHeightVar);
+    }
+})();

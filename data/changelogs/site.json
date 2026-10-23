@@ -3,6 +3,38 @@
     "projectDisplay": { "en": "Portfolio Site", "pl": "Strona portfolio" },
     "versions": [
         {
+            "version": "1.2.1",
+            "date": "2026-10-24",
+            "categories": [
+                {
+                    "name": { "en": "Pricing", "pl": "Cennik" },
+                    "changes": {
+                        "en": [
+                            "A short line under the Pricing heading now states the site's pricing philosophy up front: priced for people, not for profit.",
+                            "The Full Website Build card now states its deposit terms directly — 40% upfront to start, the remaining 60% on delivery.",
+                            "Each Projects card with a matching entry in Pricing (Digital Business Card, 3D Logo Spinner, Screensaver, Wallpaper) now links straight to that entry, so it's easy to see roughly what a project like it costs."
+                        ],
+                        "pl": [
+                            "Pod nagłówkiem sekcji Cennik pojawiła się krótka linijka wprost podsumowująca filozofię cenową strony: być dla ludzi, nie dla pieniędzy.",
+                            "Karta Full Website Build podaje teraz wprost warunki zaliczki — 40% na start, pozostałe 60% po dostawie.",
+                            "Każda karta w Projektach, która ma odpowiednik w Cenniku (Cyfrowa wizytówka, Kręcące się logo 3D, Wygaszacz, Tapeta), prowadzi teraz prosto do tej pozycji, żeby łatwo zobaczyć, ile taki projekt orientacyjnie kosztuje."
+                        ]
+                    }
+                },
+                {
+                    "name": { "en": "Performance & technical details", "pl": "Wydajność i szczegóły techniczne" },
+                    "changes": {
+                        "en": [
+                            "Fixed every link to a specific section (including the new \"See pricing\" links) sometimes landing partly behind the top navigation bar instead of right at the section title."
+                        ],
+                        "pl": [
+                            "Naprawiono sytuację, w której kliknięcie linku do konkretnej sekcji (w tym nowych linków \"Zobacz cennik\") mogło lądować częściowo pod górnym paskiem nawigacji, zamiast dokładnie przy tytule sekcji."
+                        ]
+                    }
+                }
+            ]
+        },
+        {
             "version": "1.2.0",
             "date": "2026-10-02",
             "categories": [

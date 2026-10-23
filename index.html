@@ -167,7 +167,10 @@
                     <li class="tag">Vanilla JS</li>
                     <li class="tag" data-i18n="projects.bizCard.tagSelf">Self-built</li>
                 </ul>
-                <a href="#contact" class="project-card__cta" data-i18n="projects.bizCard.cta">Try it in Contact ↓</a>
+                <div class="project-card__ctas">
+                    <a href="#contact" class="project-card__cta" data-i18n="projects.bizCard.cta">Try it in Contact ↓</a>
+                    <a href="#pricing-bizcard" class="project-card__cta project-card__cta--pricing" data-i18n="projects.pricingCta">See pricing →</a>
+                </div>
             </article>
 
             <article class="project-card">
@@ -179,7 +182,10 @@
                     <li class="tag">WebGL</li>
                     <li class="tag" data-i18n="projects.logoSpinner.tagSelf">Self-built</li>
                 </ul>
-                <a href="#hero" class="project-card__cta" data-i18n="projects.logoSpinner.cta">↑ See it in the Hero above</a>
+                <div class="project-card__ctas">
+                    <a href="#hero" class="project-card__cta" data-i18n="projects.logoSpinner.cta">↑ See it in the Hero above</a>
+                    <a href="#pricing-logo" class="project-card__cta project-card__cta--pricing" data-i18n="projects.pricingCta">See pricing →</a>
+                </div>
             </article>
 
             <article class="project-card">
@@ -193,7 +199,10 @@
                     <li class="tag">Three.js</li>
                     <li class="tag" data-i18n="projects.screensaver.tagOpenSource">Open Source</li>
                 </ul>
-                <a href="https://github.com/rek123p/Screensaver-Time-edition---stock" target="_blank" rel="noopener" class="project-card__cta" data-i18n="projects.screensaver.cta"> Get your Screensaver: Time Edition for free ↗</a>
+                <div class="project-card__ctas">
+                    <a href="https://github.com/rek123p/Screensaver-Time-edition---stock" target="_blank" class="project-card__cta" data-i18n="projects.screensaver.cta"> Get your Screensaver: Time Edition for free ↗</a>
+                    <a href="#pricing-screensaver" class="project-card__cta project-card__cta--pricing" data-i18n="projects.pricingCta">See pricing →</a>
+                </div>
             </article>
 
             <article class="project-card">
@@ -206,7 +215,10 @@
                     <li class="tag">Canvas 2D</li>
                     <li class="tag" data-i18n="projects.wallpaper.tagOpenSource">Open Source</li>
                 </ul>
-                <a href="https://github.com/rek123p/Wallpaper-Time-Edition---stock" target="_blank" rel="noopener" class="project-card__cta" data-i18n="projects.wallpaper.cta">Get your Wallpaper: Time Edition for free ↗</a>
+                <div class="project-card__ctas">
+                    <a href="https://github.com/rek123p/Wallpaper-Time-Edition---stock" target="_blank" rel="noopener" class="project-card__cta" data-i18n="projects.wallpaper.cta">Get your Wallpaper: Time Edition for free ↗</a>
+                    <a href="#pricing-wallpaper" class="project-card__cta project-card__cta--pricing" data-i18n="projects.pricingCta">See pricing →</a>
+                </div>
             </article>
         </div>
     </section>
@@ -214,6 +226,7 @@
     <section id="pricing">
         <h2 data-i18n="pricing.heading">Pricing</h2>
         <p class="lede" data-i18n="pricing.lede">Ballpark ranges for custom work — pick a currency to see them converted live.</p>
+        <p class="pricing-motto" data-i18n="pricing.motto">Priced for people, not for profit.</p>
 
         <div class="currency-switch" role="group" aria-label="Currency">
             <button type="button" class="currency-btn is-active" data-currency="PLN">PLN</button>
@@ -223,7 +236,7 @@
         </div>
 
         <div class="pricing-grid">
-            <article class="pricing-card">
+            <article class="pricing-card" id="pricing-logo">
                 <h3 data-i18n="pricing.logo.title">Animated Logo</h3>
                 <p class="pricing-card__range" data-price-min="200" data-price-max="600">
                     <span class="price-min">200</span>-<span class="price-max">600</span> <span class="price-currency">zł</span>
@@ -231,7 +244,7 @@
                 <p data-i18n="pricing.logo.desc">A short custom animation of your logo — spin, reveal, loop, whatever fits.</p>
             </article>
 
-            <article class="pricing-card">
+            <article class="pricing-card" id="pricing-screensaver">
                 <h3 data-i18n="pricing.screensaver.title">Screensaver</h3>
                 <p class="pricing-card__range" data-price-min="250" data-price-max="800">
                     <span class="price-min">250</span>-<span class="price-max">800</span> <span class="price-currency">zł</span>
@@ -239,7 +252,7 @@
                 <p data-i18n="pricing.screensaver.desc">Custom desktop screensaver with a live clock and date.</p>
             </article>
 
-            <article class="pricing-card">
+            <article class="pricing-card" id="pricing-wallpaper">
                 <h3 data-i18n="pricing.wallpaper.title">Wallpaper</h3>
                 <p class="pricing-card__range" data-price-min="150" data-price-max="450">
                     <span class="price-min">150</span>-<span class="price-max">450</span> <span class="price-currency">zł</span>
@@ -253,7 +266,7 @@
                 </ul>
             </article>
 
-            <article class="pricing-card">
+            <article class="pricing-card" id="pricing-bizcard">
                 <h3 data-i18n="pricing.bizCard.title">Digital Business Card</h3>
                 <p class="pricing-card__range" data-price-min="300" data-price-max="800">
                     <span class="price-min">300</span>-<span class="price-max">800</span> <span class="price-currency">zł</span>
@@ -281,6 +294,7 @@
                     <ul class="pricing-extras">
                         <li data-i18n="pricing.webpage.rights">Full copyright buyout: priced individually (rough reference point: about +30% on top of the base quote, not a fixed rule).</li>
                         <li data-i18n="pricing.webpage.maintenance">Ongoing maintenance: negotiated individually with each client.</li>
+                        <li data-i18n="pricing.webpage.deposit">Deposit: 40% upfront to start, the remaining 60% on delivery. Non-refundable if the client cancels after work has started.</li>
                     </ul>
                 </article>
             </div>

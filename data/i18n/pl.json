@@ -66,6 +66,7 @@
 
     "pricing.heading": "Cennik",
     "pricing.lede": "Orientacyjne widełki za customową robotę — wybierz walutę, żeby zobaczyć przeliczenie na żywo.",
+    "pricing.motto": "Być dla ludzi, nie dla pieniędzy.",    
     "pricing.logo.title": "Animowane logo",
     "pricing.logo.desc": "Krótka, customowa animacja Twojego logo — obrót, reveal, pętla, cokolwiek pasuje.",
     "pricing.screensaver.title": "Wygaszacz",
@@ -91,7 +92,9 @@
     "pricing.webpage.desc": "W pełni customowa strona zbudowana od podstaw — design, struktura i funkcje dopasowane do projektu, niezależnie czy to strona firmowa czy prywatna.",
     "pricing.webpage.rights": "Pełne prawa autorskie majątkowe: wycena indywidualna (orientacyjny punkt odniesienia: ok. +30% do wyceny bazowej, nie sztywna reguła).",
     "pricing.webpage.maintenance": "Utrzymanie strony: ustalane indywidualnie z każdym klientem.",
+    "pricing.webpage.deposit": "Zaliczka: 40% z góry przy starcie, pozostałe 60% po dostawie. Bezzwrotna, jeśli klient wycofa się po rozpoczęciu pracy.",
     "pricing.disclaimer": "Powyższe ceny to punkt orientacyjny, nie sztywny cennik. Jeśli masz pomysł wykraczający poza standardowy zakres — bardziej rozbudowaną animację, unikalną koncepcję, coś zupełnie innego niż to co widzisz wyżej — napisz do mnie. Jestem w stanie zrealizować dużo więcej niż pokazane tu przykłady, za adekwatną do zakresu pracy ceną.",
+    "projects.pricingCta": "Zobacz cennik →",
 
     "contact.heading": "Kontakt",
     "contact.lede": "Najszybciej złapiesz mnie mailowo albo na Discordzie.",
