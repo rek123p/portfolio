@@ -79,6 +79,9 @@
     "pricing.wallpaper.tagAnimated": "Animowana",
     "pricing.bizCard.title": "Cyfrowa wizytówka",
     "pricing.bizCard.desc": "Ta sama animowana wizytówka co w Projektach — wbudowana w Twoją stronę, albo jako osobna, samodzielna strona, jeśli wolisz.",
+    "pricing.currencyLabel": "Waluta:",
+    "pricing.currencySearchPlaceholder": "Szukaj waluty...",
+    "pricing.currencySearchEmpty": "Brak pasujących walut.",
     "pricing.updatedLabel": "Kursy:",
     "pricing.updatedMoments": "przed chwilą",
     "pricing.updatedMinutesOne": "{n} minutę temu",
@@ -95,6 +98,12 @@
     "pricing.webpage.deposit": "Zaliczka: 40% z góry przy starcie, pozostałe 60% po dostawie. Bezzwrotna, jeśli klient wycofa się po rozpoczęciu pracy.",
     "pricing.disclaimer": "Powyższe ceny to punkt orientacyjny, nie sztywny cennik. Jeśli masz pomysł wykraczający poza standardowy zakres — bardziej rozbudowaną animację, unikalną koncepcję, coś zupełnie innego niż to co widzisz wyżej — napisz do mnie. Jestem w stanie zrealizować dużo więcej niż pokazane tu przykłady, za adekwatną do zakresu pracy ceną.",
     "projects.pricingCta": "Zobacz cennik →",
+
+    "currency.PLN": "Polski złoty",
+    "currency.EUR": "Euro",
+    "currency.USD": "Dolar amerykański",
+    "currency.GBP": "Funt szterling",
+    "currency.GEL": "Lari gruzińskie",
 
     "contact.heading": "Kontakt",
     "contact.lede": "Najszybciej złapiesz mnie mailowo albo na Discordzie.",

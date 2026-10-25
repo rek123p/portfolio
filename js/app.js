@@ -321,13 +321,31 @@ setTimeout(() => {
 // Pricing — live currency conversion + "last updated" readout
 // ---------------------------------------------------------------------------
 
-const CURRENCY_SYMBOLS = { PLN: "zł", EUR: "€", USD: "$", GBP: "£" };
+const CURRENCY_SYMBOLS = { PLN: "zł", EUR: "€", USD: "$", GBP: "£", GEL: "₾" };
 
-const currencySwitchEl = document.querySelector(".currency-switch");
+// Each entry's `fallback` is the English display name, shown via
+// translate("currency.<code>", fallback) — same localized-name pattern as
+// everything else on the site, just resolved in JS instead of baked into
+// data-i18n markup, since the dropdown list is built dynamically.
+const CURRENCY_LIST = [
+    { code: "PLN", fallback: "Polish Złoty" },
+    { code: "EUR", fallback: "Euro" },
+    { code: "USD", fallback: "US Dollar" },
+    { code: "GBP", fallback: "British Pound" },
+    { code: "GEL", fallback: "Georgian Lari" },
+];
+
+const currencyToggle = document.getElementById("currencyToggle");
+const currencyMenu = document.getElementById("currencyMenu");
+const currencyCurrent = document.getElementById("currencyCurrent");
+const currencySearch = document.getElementById("currencySearch");
+const currencyList = document.getElementById("currencyList");
+const currencySearchEmpty = document.getElementById("currencySearchEmpty");
+
 const pricingUpdatedEl = document.getElementById("pricingUpdated");
 const priceRangeEls = document.querySelectorAll(".pricing-card__range");
 
-let pricingRates = null; // { PLN: 1, EUR: .., USD: .., GBP: .. } once loaded, else null
+let pricingRates = null; // { PLN: 1, EUR: .., USD: .., GBP: .., GEL: .. } once loaded, else null
 let pricingUpdatedAt = null; // Date parsed from rates.json's "updated" field
 let currentCurrency = "PLN";
 
@@ -394,9 +412,12 @@ function refreshPricingUpdatedText() {
 function applyCurrency(code) {
     currentCurrency = code;
 
-    currencySwitchEl?.querySelectorAll(".currency-btn").forEach((btn) => {
-        btn.classList.toggle("is-active", btn.dataset.currency === code);
-    });
+    if (currencyCurrent) currencyCurrent.textContent = code;
+    if (currencyList) {
+        currencyList.querySelectorAll("button").forEach((btn) => {
+            btn.setAttribute("aria-selected", btn.dataset.currencyCode === code ? "true" : "false");
+        });
+    }
 
     const rate = pricingRates ? pricingRates[code] : code === "PLN" ? 1 : null;
     if (rate == null) return; // rates.json hasn't loaded yet — HTML's baked-in PLN values stay as-is
@@ -408,6 +429,55 @@ function applyCurrency(code) {
         el.querySelector(".price-max").textContent = max;
         el.querySelector(".price-currency").textContent = CURRENCY_SYMBOLS[code] || code;
     });
+}
+
+// Builds the dropdown's option list from CURRENCY_LIST, using the current
+// language's translated currency names — same "code — name" shape as the
+// version switcher's "1.2.1 — 2026-10-23" entries. Rebuilt on every
+// language change (see the languagechange listener below) since the
+// translated names themselves change.
+function buildCurrencyMenu() {
+    if (!currencyList) return;
+    currencyList.innerHTML = "";
+
+    CURRENCY_LIST.forEach(({ code, fallback }) => {
+        const name = translate(`currency.${code}`, fallback);
+
+        const li = document.createElement("li");
+        li.dataset.searchText = `${code} ${name}`.toLowerCase();
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.setAttribute("role", "option");
+        btn.dataset.currencyCode = code;
+        btn.setAttribute("aria-selected", code === currentCurrency ? "true" : "false");
+        btn.textContent = `${code} — ${name}`;
+
+        li.appendChild(btn);
+        currencyList.appendChild(li);
+    });
+}
+
+// Live-filters the dropdown's <li> items by code / name against the search
+// box's current value, and shows/hides the "no matches" note — mirrors
+// changelog.js's filterVersionList().
+function filterCurrencyList(query) {
+    if (!currencyList) return;
+    const normalized = query.trim().toLowerCase();
+    let visibleCount = 0;
+
+    currencyList.querySelectorAll("li").forEach((li) => {
+        const match = !normalized || li.dataset.searchText.includes(normalized);
+        li.hidden = !match;
+        if (match) visibleCount++;
+    });
+
+    if (currencySearchEmpty) currencySearchEmpty.hidden = visibleCount !== 0;
+}
+
+function updateCurrencySearchPlaceholder() {
+    if (!currencySearch || typeof translate !== "function") return;
+    currencySearch.placeholder = translate("pricing.currencySearchPlaceholder", "Search currencies...");
 }
 
 async function loadPricingRates() {
@@ -429,14 +499,44 @@ async function loadPricingRates() {
     refreshPricingUpdatedText();
 }
 
-currencySwitchEl?.addEventListener("click", (event) => {
-    const btn = event.target.closest(".currency-btn");
-    if (!btn || btn.disabled) return;
-    applyCurrency(btn.dataset.currency);
+buildCurrencyMenu();
+updateCurrencySearchPlaceholder();
+
+currencyToggle?.addEventListener("click", () => {
+    const expanded = currencyToggle.getAttribute("aria-expanded") === "true";
+    const opening = !expanded;
+    currencyToggle.setAttribute("aria-expanded", String(opening));
+    if (currencyMenu) currencyMenu.hidden = !opening;
+    if (opening && currencySearch) {
+        currencySearch.value = "";
+        filterCurrencyList("");
+        currencySearch.focus();
+    }
+});
+
+currencyList?.addEventListener("click", (event) => {
+    const btn = event.target.closest("button[data-currency-code]");
+    if (!btn) return;
+    applyCurrency(btn.dataset.currencyCode);
+    if (currencyMenu) currencyMenu.hidden = true;
+    currencyToggle?.setAttribute("aria-expanded", "false");
+});
+
+currencySearch?.addEventListener("input", () => {
+    filterCurrencyList(currencySearch.value);
+});
+
+document.addEventListener("click", (event) => {
+    if (!currencyMenu || currencyMenu.hidden) return;
+    if (event.target.closest(".currency-switch")) return;
+    currencyMenu.hidden = true;
+    currencyToggle?.setAttribute("aria-expanded", "false");
 });
 
 document.addEventListener("languagechange", () => {
     refreshPricingUpdatedText(); // "minutes ago" text is language-dependent
+    buildCurrencyMenu(); // currency names are translated too
+    updateCurrencySearchPlaceholder();
 });
 
 loadPricingRates();

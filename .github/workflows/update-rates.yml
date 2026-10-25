@@ -16,7 +16,7 @@ jobs:
 
       - name: Fetch and update rates
         run: |
-          if curl -sf "https://api.frankfurter.dev/v2/rates?base=pln&quotes=eur,usd,gbp" -o /tmp/frankfurter.json; then
+          if curl -sf "https://api.frankfurter.dev/v2/rates?base=pln&quotes=eur,usd,gbp,gel" -o /tmp/frankfurter.json; then
             node -e "
               const fs = require('fs');
               const raw = JSON.parse(fs.readFileSync('/tmp/frankfurter.json', 'utf8'));

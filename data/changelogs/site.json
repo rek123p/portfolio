@@ -3,6 +3,34 @@
     "projectDisplay": { "en": "Portfolio Site", "pl": "Strona portfolio" },
     "versions": [
         {
+            "version": "1.2.2",
+            "date": "2026-10-25",
+            "categories": [
+                {
+                    "name": { "en": "Pricing", "pl": "Cennik" },
+                    "changes": {
+                        "en": [
+                            "Added Georgian Lari (GEL) as a pricing currency, with live exchange rates refreshed automatically alongside PLN, EUR, USD, and GBP."
+                        ],
+                        "pl": [
+                            "Dodano lari gruzińskie (GEL) jako kolejną walutę cennika, z kursami aktualizowanymi automatycznie razem z PLN, EUR, USD i GBP."
+                        ]
+                    }
+                },
+                {
+                    "name": { "en": "Interactive features", "pl": "Funkcje interaktywne" },
+                    "changes": {
+                        "en": [
+                            "Redesigned how you pick a currency: it's now a searchable dropdown list showing each currency's full name (e.g. \"GEL — Georgian Lari\") instead of a row of buttons — the same pattern already used for picking a Release Notes version."
+                        ],
+                        "pl": [
+                            "Przeprojektowano wybór waluty: to teraz przeszukiwalna rozwijana lista pokazująca pełną nazwę waluty (np. \"GEL — Lari gruzińskie\") zamiast rzędu przycisków — ten sam wzorzec, który jest już używany przy wyborze wersji w Release Notes."
+                        ]
+                    }
+                }
+            ]
+        },
+        {
             "version": "1.2.1",
             "date": "2026-10-24",
             "categories": [

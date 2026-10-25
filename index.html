@@ -228,11 +228,19 @@
         <p class="lede" data-i18n="pricing.lede">Ballpark ranges for custom work — pick a currency to see them converted live.</p>
         <p class="pricing-motto" data-i18n="pricing.motto">Priced for people, not for profit.</p>
 
-        <div class="currency-switch" role="group" aria-label="Currency">
-            <button type="button" class="currency-btn is-active" data-currency="PLN">PLN</button>
-            <button type="button" class="currency-btn" data-currency="EUR">EUR</button>
-            <button type="button" class="currency-btn" data-currency="USD">USD</button>
-            <button type="button" class="currency-btn" data-currency="GBP">GBP</button>
+        <div class="currency-switch">
+            <button id="currencyToggle" type="button" aria-haspopup="listbox" aria-expanded="false">
+                <span data-i18n="pricing.currencyLabel">Currency:</span>
+                <span id="currencyCurrent">PLN</span>
+                <svg class="currency-switch__caret" viewBox="0 0 12 8" aria-hidden="true">
+                    <path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+            <div id="currencyMenu" class="currency-switch__menu" hidden>
+                <input id="currencySearch" type="text" class="currency-switch__search" autocomplete="off" />
+                <ul id="currencyList" class="currency-switch__list" role="listbox"></ul>
+                <p id="currencySearchEmpty" class="currency-switch__empty" hidden data-i18n="pricing.currencySearchEmpty">No currencies match.</p>
+            </div>
         </div>
 
         <div class="pricing-grid">
