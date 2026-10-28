@@ -1,5 +1,9 @@
 # [-Bravo-] / rekin123p / rek123p — Portfolio
 
+> **This site is moving.** The live version now lives at
+> [rekin123p.yo.onl](https://rekin123p.yo.onl) — this GitHub Pages copy will
+> be taken down by the end of 2026.
+
 Personal portfolio site: a dark, cosmic-themed single-page site with a live 3D
 background (sun/moon/earth), bilingual PL/EN content, a real-time 3D spinning
 brand logo, a pricing section with live currency conversion, and per-project

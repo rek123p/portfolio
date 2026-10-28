@@ -512,6 +512,53 @@ header nav {
     padding: 8px 10px 4px;
 }
 
+.migration-banner {
+    position: relative;
+    max-width: 1120px;
+    margin: 16px auto 0;
+    padding: 14px 44px 14px 24px;
+    background: rgba(232, 182, 76, 0.08);
+    border: 1px solid rgba(232, 182, 76, 0.25);
+    border-radius: 12px;
+}
+
+.migration-banner p {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--text-1);
+}
+
+.migration-banner a {
+    color: var(--gold-bright);
+    font-weight: 600;
+}
+
+.migration-banner__close {
+    position: absolute;
+    top: 9px;
+    right: 10px;
+    width: 26px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--text-2);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+}
+
+.migration-banner__close:hover {
+    color: var(--gold-bright);
+    background: rgba(255, 255, 255, 0.08);
+}
+
 /* Hero */
 
 #hero {

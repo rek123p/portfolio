@@ -3,6 +3,38 @@
     "projectDisplay": { "en": "Portfolio Site", "pl": "Strona portfolio" },
     "versions": [
         {
+            "version": "2.0.0",
+            "date": "2026-19-28",
+            "categories": [
+                {
+                    "name": { "en": "Hosting & domain", "pl": "Hosting i domena" },
+                    "changes": {
+                        "en": [
+                            "The live site has a new home of its own: rekin123p.yo.onl is now the primary address, independent of GitHub Pages.",
+                            "This GitHub Pages copy now shows a short notice about the move and will be taken down by the end of 2026 — update any bookmarks to the new address above.",
+                            "Page addresses on the new domain no longer end in .html (e.g. /credits instead of /credits.html."
+                        ],
+                        "pl": [
+                            "Żywa strona ma teraz własny, nowy dom: rekin123p.yo.onl jest głównym adresem, niezależnym od GitHub Pages.",
+                            "Ta kopia na GitHub Pages pokazuje teraz krótką notkę o przenosinach i zostanie zdjęta do końca 2026 roku — zaktualizuj zakładki na nowy adres podany wyżej.",
+                            "Adresy podstron na nowej domenie nie kończą się już na .html (np. /credits zamiast /credits.html)."
+                        ]
+                    }
+                },
+                {
+                    "name": { "en": "Performance & technical details", "pl": "Wydajność i szczegóły techniczne" },
+                    "changes": {
+                        "en": [
+                            "The new domain enforces HTTPS and includes basic abuse protection (blocking image hotlinking and directory listing)."
+                        ],
+                        "pl": [
+                            "Nowa domena wymusza HTTPS i ma podstawowe zabezpieczenia przed nadużyciami (blokada hotlinkowania obrazków i przeglądania zawartości katalogów)."
+                        ]
+                    }
+                }
+            ]
+        },
+        {
             "version": "1.2.2",
             "date": "2026-10-25",
             "categories": [

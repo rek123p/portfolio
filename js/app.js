@@ -1028,3 +1028,31 @@ updateFooterVersion();
         window.addEventListener('resize', setHeaderHeightVar);
     }
 })();
+
+// Migration banner — temporary, remove once the GitHub pages copy of this
+// site is retired. Dismissing it only hides it for the rest of this browser
+// session (sessionStorage), not forever, so it comes back on a later visit.
+(function () {
+    const banner = document.getElementById("migrationBanner");
+    const closeBtn = document.getElementById("migrationBannerClose");
+    if (!banner) return;
+
+    const DISMISS_KEY = "migrationBannerDismissed";
+
+    try {
+        if (sessionStorage.getItem(DISMISS_KEY) === "1") {
+            banner.hidden = true;
+        }
+    } catch (err) {
+        // Private browsing / storage disabled — banner just stays visible.
+    }
+
+    closeBtn?.addEventListener("click", () => {
+        banner.hidden = true;
+        try {
+            sessionStorage.setItem(DISMISS_KEY, "1");
+        } catch (err) {
+            // Ignore — it still closes for this page view either way.
+        }
+    });
+})();
